@@ -5,7 +5,7 @@ class Attribute:
         self.value = value
 
     def toString(self):
-        return self.name + ' = ' + self.value + ' (generic)'
+        return self.name + ': ' + self.value + ' (generic)'
 
 class AttributeNumber(Attribute):
 
@@ -13,7 +13,7 @@ class AttributeNumber(Attribute):
         Attribute.__init__(self, name, value)
 
     def toString(self):
-        return self.name + ' = ' + str(self.value) + ' (number)'
+        return self.name + ': ' + str(self.value) + ' (number)'
 
 class AttributeBool(Attribute):
 
@@ -21,7 +21,7 @@ class AttributeBool(Attribute):
         Attribute.__init__(self, name, value)
 
     def toString(self):
-        return self.name + ' = ' + str(self.value) + ' (bool)'
+        return self.name + ': ' + str(self.value) + ' (bool)'
 
 class AttributeString(Attribute):
 
@@ -29,7 +29,7 @@ class AttributeString(Attribute):
         Attribute.__init__(self, name, value)
 
     def toString(self):
-        return self.name + ' = ' + self.value + ' (string)'
+        return self.name + ': ' + self.value + ' (string)'
 
 
 # static factory class for building attributes

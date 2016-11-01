@@ -8,7 +8,9 @@ class ClassObject:
         self.attributes.append(attribute)
 
     def print(self):
-        print('CLASS: ' + self.name)
+        print(self.name + ' {')
 
         for i in range(0, len(self.attributes)):
-            print('\tATTR_' + str(i) + ': ' + self.attributes[i].toString())
+            print(' ' + self.attributes[i].toString())
+
+        print('}')

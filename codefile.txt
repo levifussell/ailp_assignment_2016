@@ -1,4 +1,12 @@
+<Proposition>
+    <name>murder</name>
+    <truth>True</truth>
+</Proposition>>
+
+<!>Comment on something</!>
+
 <Argument1>
+    <!>Comment on something</!>
     <name>1</name>
     <propositions>[prop1, prop2, prop3]</propositions>
     <exceptions>[exp1, exp2]</exceptions>

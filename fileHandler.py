@@ -7,7 +7,7 @@
 # </Proposition>
 # 
 # --ARGUEMENTS:
-# <Arguement>
+# <Argument>
 #   <propositions>[P1, P2, P3]</propositions>
 #   <exceptions>[P1, P2, P3]</exceptions>
 #   <outcome>PROPOSITION</outcome>
@@ -22,52 +22,80 @@
 from ClassObject import ClassObject
 from Attribute import AttributeFactory
 from MarkupObject import MarkupObject
+from CodeFile import CodeFile
 
 import re
 from copy import copy, deepcopy
 
+import curses
+from curses.textpad import Textbox, rectangle
+
 # SIMULATE A FILE READ HERE----
-# start reading the file here for regExp
-def readInputFileString(input):
-
-    regClasses = regFindAllClassObjects(input)
-
-    classObjs = []
-
-    for i in range(0, len(regClasses)):
-        classObj = regBuildClassObject(regClasses.pop())
-        classObjs.append(classObj)
-        # regFindClassAttributeObjects(regClasses.pop())
-
-    # TEMP: print the classes that have been found
-    for i in range(0, len(classObjs)):
-        classObjs[i].print()
-
 # REGEX FOR GENERIC MARK UP LANGUAGE--------------------------------------
 
 def beginMarkupRead(dataString):
 
+    # create a CodeFile object
+    codeFile = CodeFile(dataString)
+
+    # find all linebreak locations
+    # linebreakIndices = []
+    # lineIndex = 0
+    # while lineIndex >= 0:
+    #     lineIndex = dataString.find('\n', lineIndex + 1)
+    #     if lineIndex != -1:
+    #         linebreakIndices.append(lineIndex)
+    #         # print(lineIndex)
+
+    # for i in range(0, len(linebreakIndices)):
+    #     print(linebreakIndices[i])
+
     # remove extra spaces and newlines from text file
-    dataString = re.sub('[\\n]|[\\s]', '', dataString)
+    # dataString = re.sub('[\\n]|[\\s]', '', dataString)
     # record the extracted data in a stack
     stackData = []
     # recursively extract markup data
-    regFindNextMarkupObj(dataString, 0, stackData)
+    regFindNextMarkupObj(codeFile.getCleanCodeText(), 0, stackData)
 
     # for i in range(0, len(stackData)):
     #     print(stackData[i].toString())
 
     # convert the markup data stack to class objects
-    listClassObjs = convertMarkupStackToObjects(stackData)
+    errorList = regFindSyntaxErrors(codeFile)
 
-    for i in range(0, len(listClassObjs)):
-        listClassObjs[i].print()
+    if len(errorList) == 0:
+        listClassObjs = convertMarkupStackToObjects(stackData)
+
+        for i in range(0, len(listClassObjs)):
+            listClassObjs[i].print()
+
+    else:
+        print('ERRORS FOUND: ')
+        for i in range(0, len(errorList)):
+            print(errorList[i])
+
+def regFindSyntaxErrors(codeFile):
+
+    dataString = codeFile.getCleanCodeText()
+    errorsList = []
+
+    try:
+        # check all '<>' are matching and NOT embedded
+        error_matchingBrackets = re.search('(<[^<|^>]*<[^<|^>]*)|(>[^<|^>]*>[^<|^>]*)', dataString, re.DOTALL)
+
+        errorValue = error_matchingBrackets.group(0)
+        errorsList.append('error \'' + errorValue + '\' found at line ' + str(codeFile.getLineOfText(errorValue)))
+    except:
+        print('NO BRACKET ERRORS')
+
+    return errorsList
 
 def regFindNextMarkupObj(dataString, depth, stackData):
     while len(dataString) > 0:
+
         # get the name of the next markup obj
         try:
-            regMarkupObjName = re.search('<[\w].+?>', dataString, re.DOTALL).group(0)
+            regMarkupObjName = re.search('<[\w|!]+?>', dataString, re.DOTALL).group(0)
             markupObjName = regMarkupObjName[1:len(regMarkupObjName) - 1]
             dataString = dataString[len(regMarkupObjName):len(dataString)]
             # print('E:')
@@ -95,7 +123,7 @@ def regFindNextMarkupObj(dataString, depth, stackData):
             # print('D:' + dataString)
         except:
             print('NO DATA')
-            return
+            # return
     
 
 def convertMarkupStackToObjects(stackData):
@@ -108,7 +136,13 @@ def convertMarkupStackToObjects(stackData):
         _a = stackData.pop()
         if _a.type == 'value':
             variable = stackData.pop()
-            queueAttributes.append([variable.data, _a.data])
+            # first check the variable is not a comment
+            if variable.data == '!':
+                #TODO: do something if it is a comment
+                print('COMMENT FOUND')
+            else:
+                # add the value/variable object to a queue
+                queueAttributes.append([variable.data, _a.data])
         elif _a.type == 'variable':
             # get all attributes and below in queue and make a class
             classObj = ClassObject(_a.data)
@@ -147,7 +181,58 @@ if __name__ == '__main__':
     # fileData = re.sub('[\\n]|[\\s]', '', fileData)
     # # fileData = re.sub('\\s', '', fileData)
     # print(fileData)
+
+    # TODO: UNCOMMENT TO RUN COMPILER ON TEXT
     beginMarkupRead(fileData)
+
+    # -----------------------------------------
+    # stdscr = curses.initscr()
+    # stdscr.keypad(True)
+    # curses.cbreak()
+    # curses.noecho()
+
+    # stdscr.addstr(0, 0, "Enter IM message: (hit Ctrl-G to send)")
+
+    # editwin = curses.newwin(5,30, 2,1)
+    # rectangle(stdscr, 1,0, 1+20+1, 1+30+1)
+    # stdscr.refresh()
+
+    # box = Textbox(editwin)
+
+    # # Let the user edit until Ctrl-G is struck.
+    # box.edit()
+
+    # # Get resulting contents
+    # message = box.gather()
+
+    # curses.nocbreak()
+    # stdscr.keypad(False)
+    # curses.echo()
+    # curses.endwin()
+    # -----------------------------------------
+
+    # while True:
+    #     curses.echo()
+    #     c = stdscr.getch()
+    #     if c == curses.KEY_BACKSPACE:
+    #         stdscr.addch(' ')
+    #         [y, x] = curses.getsyx()
+    #         if x > 0:
+    #             stdscr.move(y, x)
+    #         elif y > 0:
+    #             stdscr.move(y - 1, x)
+
+    #         stdscr.refresh()
+
+    #     if c == curses.KEY_ENTER or c == 10 or c == 13:
+    #         [y, x] = curses.getsyx()
+    #         stdscr.move(y + 1, 0)
+    #     elif c == ord('q'):
+    #         curses.nocbreak()
+    #         stdscr.keypad(False)
+    #         curses.echo()
+    #         curses.endwin()
+    #         break
 
     # attr1 = AttributeFactory.createAttribute('hello', 'false')
     # print(attr1.toString())
