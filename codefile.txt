@@ -1,7 +1,7 @@
 <Proposition>
     <name>murder</name>
     <truth>True</truth>
-</Proposition>>
+</Proposition>
 
 <!>Comment on something</!>
 
