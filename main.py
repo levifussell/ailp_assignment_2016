@@ -20,7 +20,10 @@
 # data_input = "<Argument>\n" + "\t<name>Arg1</name>\n" + "</Argument>" + "\n<Argument>\n" + "\t<name>Arg2</name>\n" + "</Argument>"
 
 from Compilation.CodeFile import CodeFile
+from Compilation.MarkupCompiler import MarkupCompiler
 from MarkupReader_.MarkupReader import MarkupReader, ErrorTypes
+
+from _LoggerManager import _Logger_Thread, _Log
 
 import re
 from copy import copy, deepcopy
@@ -33,12 +36,20 @@ from curses.textpad import Textbox, rectangle
 
 def beginMarkupRead(dataString):
 
+    # start error thread
+    _THREAD_log = _Logger_Thread()
+    _THREAD_log.start()
+
     # create a CodeFile object
     codeFile = CodeFile(dataString)
 
     mlreader = MarkupReader()
     mlreader.addErrorType(ErrorTypes.ERR_MATCHINGBRACKETS)
-    mlreader.run(codeFile)
+    mlreader.addErrorType(ErrorTypes.ERR_UNKNOWNCHARACTER)
+    classObjs = mlreader.run(codeFile)
+
+    mlcompiler = MarkupCompiler()
+    mlcompiler.run(classObjs)
 
 
 #MAIN----------------------------------------------------

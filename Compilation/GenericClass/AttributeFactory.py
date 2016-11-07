@@ -1,4 +1,4 @@
-from .Attribute import AttributeNumber, AttributeBool, AttributeString
+from .Attribute import AttributeNumber, AttributeBool, AttributeString, AttributeList
 
 class AttributeFactory:
 
@@ -21,5 +21,7 @@ class AttributeFactory:
                 val_lower = value.lower()
                 if val_lower == 'true' or val_lower == 'false':
                     return AttributeBool
+                elif val_lower[0] == '[':
+                    return AttributeList
                 else:
                     return AttributeString

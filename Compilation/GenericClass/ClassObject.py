@@ -7,10 +7,28 @@ class ClassObject:
     def addAttribute(self, attribute):
         self.attributes.append(attribute)
 
-    def print(self):
-        print(self.name + ' {')
+    def findAttributeByName(self, nameSearch):
+        for i in range(0, len(self.attributes)):
+            if self.attributes[i].name == nameSearch:
+                return self.attributes[i]
+        
+        raise NameError('attribute name not found')
+
+    # return a list of the name and all attribute names of this object
+    def getDefinitionList(self):
+        defList = [self.name]
+        
+        for i in range(0, len(self.attributes)):
+            defList.append(self.attributes[i].name)
+
+        return defList
+
+    def toString(self):
+        classObjStr = self.name + ' {\n'
 
         for i in range(0, len(self.attributes)):
-            print(' ' + self.attributes[i].toString())
+            classObjStr += ' ' + self.attributes[i].toString() + '\n'
 
-        print('}')
+        classObjStr += '}\n'
+
+        return classObjStr

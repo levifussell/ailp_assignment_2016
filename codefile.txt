@@ -5,16 +5,16 @@
 
 <!>Comment on something</!>
 
-<Argument1>
+<Argument>
     <!>Comment on something</!>
-    <name>1</name>
+    <name>1</name>>
     <propositions>[prop1, prop2, prop3]</propositions>
     <exceptions>[exp1, exp2]</exceptions>
-</Argument1>
+</Argument>
 
 
 
-<Argument2><name>argument2</name>
+<Argument><name>argument2</name>
     <propositions>[prop4, prop2, prop3]</propositions>
     <exceptions>[exp6, exp2]</exceptions>
-</Argument2>
+</Argument>

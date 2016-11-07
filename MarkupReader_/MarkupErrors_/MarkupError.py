@@ -21,14 +21,20 @@ class ErrorHandlingTypes(Enum):
 
 class MarkupError:
 
+    def __init__(self, errorText, errorLevel):
+        self.errorText = errorText
+        self.errorLevel = errorLevel
+
+    def toString(self):
+        return 'error (' + ErrorHandlingTypes.toString(self.errorLevel) + '): ' + self.errorText
+
+class MarkupErrorRegEx(MarkupError):
+
     def __init__(self, regularExpression, errorText, errorLevel):
+        MarkupError.__init__(self, errorText, errorLevel)
         self.regularExpression = regularExpression
         self.errorText = errorText
         self.errorLevel = errorLevel
-        # self.lineNum = lineNum
-
-    # def getFullErrorStatement(self):
-    #     return self.errorText
 
     def toString(self):
         return 'error (' + ErrorHandlingTypes.toString(self.errorLevel) + '): ' + self.errorText

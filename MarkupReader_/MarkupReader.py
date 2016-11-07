@@ -7,6 +7,8 @@ from .MarkupObject import MarkupObject
 from Compilation.GenericClass.ClassObject import ClassObject
 from Compilation.GenericClass.AttributeFactory import AttributeFactory
 
+from _LoggerManager import _Log, _Logger_Thread, _LoggerState
+
 import re
 
 class MarkupReader:
@@ -17,25 +19,33 @@ class MarkupReader:
 
     def run(self, codeFile):
 
-        thrownErrors = self.__computeErrors(codeFile)
+        _Log('...begin reading file...', _LoggerState.WARNING)
 
-        # print('errors found: ' + str(len(thrownErrors)))
-
-        for i in range(0, len(thrownErrors)):
-            print(thrownErrors[i])
+        self.__computeErrors(codeFile)
 
         # if NO errors, continue processing the Markup
-        if len(thrownErrors) == 0:
+        if _Logger_Thread.count_errors == 0:
             
             stackData = []
             # recursively extract markup data
-            self.__regFindNextMarkupObj(codeFile.getCleanCodeText(), 0, stackData)
+            self.__regFindNextMarkupObj(codeFile.getCleanCodeText(), 0, stackData, codeFile)
 
-            listClassObjs = self.__convertMarkupStackToObjects(stackData)
+            if _Logger_Thread.count_errors == 0:
+                listClassObjs = self.__convertMarkupStackToObjects(stackData)
 
-            for i in range(0, len(listClassObjs)):
-                listClassObjs[i].print()
+                totalListLog = ''
+                for i in range(0, len(listClassObjs)):
+                    totalListLog += listClassObjs[i].toString() + '\n'
 
+                _Log(totalListLog, _LoggerState.DEBUG)
+
+                if _Logger_Thread.count_errors == 0:
+                    _Log('...reading file successful...', _LoggerState.WARNING)
+                    return listClassObjs
+                
+        _Log('...reading file failed...', _LoggerState.ERROR)
+
+        return None
         # if len(errorList) == 0:
         #     listClassObjs = convertMarkupStackToObjects(stackData)
 
@@ -60,7 +70,7 @@ class MarkupReader:
                 # first check the variable is not a comment
                 if variable.data == '!':
                     #TODO: do something if it is a comment
-                    print('COMMENT FOUND')
+                    _Log('COMMENT FOUND', _LoggerState.DEBUG)
                 else:
                     # add the value/variable object to a queue
                     queueAttributes.append([variable.data, _a.data])
@@ -77,7 +87,7 @@ class MarkupReader:
                 
         return listClassObjs
 
-    def __regFindNextMarkupObj(self, codeString, depth, stackData):
+    def __regFindNextMarkupObj(self, codeString, depth, stackData, codeFile):
 
         while len(codeString) > 0:
 
@@ -105,20 +115,22 @@ class MarkupReader:
                 endIdx = len(regMarkupObjData) - len(markupObjName) - 3
                 markupObjData = regMarkupObjData[startIdx:endIdx]
                 # print('D: ' + markupObjData)
-                self.__regFindNextMarkupObj(markupObjData, depth + 1, stackData)
+                self.__regFindNextMarkupObj(markupObjData, depth + 1, stackData, codeFile)
                 
                 codeString = codeString[len(regMarkupObjData):len(codeString)]
                 # print('D:' + codeString)
             except:
-                print('NO DATA')
+                errOB = self.__errorFactory.createError(ErrorTypes.ERR_MATCHINGNAME)
+                self.__createThrowError(errOB, regMarkupObjName, codeFile.getLineOfText(regMarkupObjName))
                 # return
 
     def __createThrowError(self, markupError, error_item, line):
-        return markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line) 
+        errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
+        # self.thrownErrors.append(errorText) 
+        _Log(errorText, _LoggerState.ERROR)
 
     def __computeError(self, codeFile, markupError):
 
-        is_thrown = False
         error_throw = ' '
 
         try:
@@ -128,25 +140,14 @@ class MarkupReader:
 
             error_item = error_re.group(0)
 
-            error_throw = self.__createThrowError(markupError, error_item, codeFile.getLineOfText(error_item))
-            is_thrown = True
+            self.__createThrowError(markupError, error_item, codeFile.getLineOfText(error_item))
         except:
-            error_throw = 'NONE'
-            is_thrown = False
-
-        return is_thrown, error_throw
+            _Log('failed to throw error in markup reader', _LoggerState.DEBUG)
 
     def __computeErrors(self, codeFile):
 
-        thrown_errors = []
-
         for i in range(0, len(self.error_types)):
-            isThrown, error_throw = self.__computeError(codeFile, self.error_types[i])
-
-            if isThrown:
-                thrown_errors.append(error_throw)
-
-        return thrown_errors
+            self.__computeError(codeFile, self.error_types[i])
 
     def addErrorType(self, errorType):
         mError = self.__errorFactory.createError(errorType)
