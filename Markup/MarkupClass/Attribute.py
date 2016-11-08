@@ -41,6 +41,9 @@ class AttributeNumber(Attribute):
     def __init__(self, name, value):
         Attribute.__init__(self, name, float(value))
 
+        if not isinstance(self.value, float):
+            raise ValueError('Number attribute must be assigned a float value')
+
     def toString(self):
         return self.name + ': ' + str(self.value) + ' (number)'
 
@@ -53,13 +56,21 @@ class AttributeBool(Attribute):
 
         Attribute.__init__(self, name, v)
 
+        if not isinstance(self.value, bool):
+            raise ValueError('Bool attribute must be assigned a boolean value')
+
+
     def toString(self):
         return self.name + ': ' + str(self.value) + ' (bool)'
 
 class AttributeString(Attribute):
     """A markup attribute that uses a string value"""
     def __init__(self, name, value):
+
         Attribute.__init__(self, name, value)
+
+        if not isinstance(self.value, str):
+            raise ValueError('String attribute must be assigned a string value')
 
     def toString(self):
         return self.name + ': ' + self.value + ' (string)'
@@ -67,9 +78,13 @@ class AttributeString(Attribute):
 class AttributeStringList(AttributeList):
     """A markup attribute that uses a list of string values"""
     def __init__(self, name, value):
+
         AttributeList.__init__(self, name, value)
 
         self.__extractList()
+
+        if not isinstance(self.value, list):
+            raise ValueError('List attribute must be assigned a list value')
 
     def __extractList(self):
         items = re.findall('\w.+?[\,|\]]', self.value, re.DOTALL)
@@ -85,6 +100,9 @@ class AttributeTupleList(AttributeList):
 
         self.__extractList()
 
+        if not isinstance(self.value, list):
+            raise ValueError('List attribute must be assigned a list value')
+
     def __extractList(self):
         tuples = re.findall('\(\w.+?\)', self.value, re.DOTALL)
 
@@ -99,6 +117,9 @@ class AttributeDictList(AttributeList):
         AttributeList.__init__(self, name, value)
         
         self.__extractList()
+
+        if not isinstance(self.value, dict):
+            raise ValueError('List attribute must be assigned a list value')
 
     def __extractList(self):
         tuples = re.findall('\(\w.+?\)', self.value, re.DOTALL)
