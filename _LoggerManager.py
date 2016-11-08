@@ -2,6 +2,8 @@ import threading
 
 import atexit
 
+import time
+
 from enum import Enum
 
 threadLock = threading.Lock()
@@ -29,7 +31,11 @@ class _Log (threading.Thread):
 
 class _Logger_Thread (threading.Thread):
 
-    currentLogState = _LoggerState.WARNING
+    programOver = False
+    programOverTime = time.time()
+    programOverTimeElapsedWait = 0.1
+
+    currentLogState = _LoggerState.DEBUG
     logsToThrowList = []
 
     count_errors = 0
@@ -39,12 +45,15 @@ class _Logger_Thread (threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         # stop this thread from running once the main thread has closed
-        self.daemon = True
+        # self.daemon = True
 
     def run(self):
         print("running: Logger Thread")
 
-        while True:
+        while _Logger_Thread.programOver == False or (len(_Logger_Thread.logsToThrowList) > 0) or ((time.time() - _Logger_Thread.programOverTime) < _Logger_Thread.programOverTimeElapsedWait):
+
+            # print(time.time() - _Logger_Thread.programOverTime)
+            # print(_Logger_Thread.programOverTimeElapsedWait)
 
             if len(_Logger_Thread.logsToThrowList) > 0:
                 threadLock.acquire()
@@ -66,16 +75,18 @@ class _Logger_Thread (threading.Thread):
 
                         # _Logger_Thread.logsToThrowList.remove(_Logger_Thread.logsToThrowList[i])
                 finally:
-                    if threadLock.locked():
-                        threadLock.release()
-
+                    # if threadLock.locked():
+                    threadLock.release()
                     _Logger_Thread.logsToThrowList.clear()
 
-    def exit_handler():
         print('LOGGER OUTPUT:\n\tERRORS: {}\n\tWARNINGS: {}\n\tDEBUGS: {}'.
             format(_Logger_Thread.count_errors, _Logger_Thread.count_warnings, _Logger_Thread.count_debugs))
 
-    atexit.register(exit_handler)
+    # def exit_handler():
+    #     print('LOGGER OUTPUT:\n\tERRORS: {}\n\tWARNINGS: {}\n\tDEBUGS: {}'.
+    #         format(_Logger_Thread.count_errors, _Logger_Thread.count_warnings, _Logger_Thread.count_debugs))
+
+    # atexit.register(exit_handler)
 
     @staticmethod
     def setLogState(logState):

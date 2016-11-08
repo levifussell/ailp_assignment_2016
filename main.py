@@ -19,14 +19,18 @@
 
 # data_input = "<Argument>\n" + "\t<name>Arg1</name>\n" + "</Argument>" + "\n<Argument>\n" + "\t<name>Arg2</name>\n" + "</Argument>"
 
-from Compilation.CodeFile import CodeFile
-from Compilation.MarkupCompiler import MarkupCompiler
-from MarkupReader_.MarkupReader import MarkupReader, ErrorTypes
+from Markup.CodeFile import CodeFile
+from Markup.Compilation.MarkupCompiler import MarkupCompiler
+from Markup.FileReading.MarkupReader import MarkupReader, ErrorTypes
+
+from Markup.MarkupClass.Attribute import AttributeTupleList
 
 from _LoggerManager import _Logger_Thread, _Log
 
 import re
 from copy import copy, deepcopy
+
+import time
 
 import curses
 from curses.textpad import Textbox, rectangle
@@ -50,6 +54,9 @@ def beginMarkupRead(dataString):
 
     mlcompiler = MarkupCompiler()
     mlcompiler.run(classObjs)
+
+    _Logger_Thread.programOverTime = time.time()
+    _Logger_Thread.programOver = True
 
 
 #MAIN----------------------------------------------------

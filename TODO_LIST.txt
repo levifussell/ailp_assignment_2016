@@ -1,0 +1,3 @@
+IMPORTANT THINGS TO COMPLETE:
+
+* check that attributes are of the correct object type (i.e. truth values are floats, names are strings)
