@@ -1,21 +1,10 @@
 import re
 from abc import ABCMeta, abstractmethod
 
-# class _Attribute_Manager:
-
-#     imporAttr = ['name', 'proposition']
-
-#     @staticmethod
-#     def isImportantAttr(attrVal):
-#         return attrVal.name in _Attribute_Manager.imporAttr
-
-#     @staticmethod
-#     def __getImportantAttributesList():    
-#         return imporAttr
-
 # ABSTRACT ATTRIBUTE CLASSES:
 
 class Attribute:
+    """Abstract attribute class defining a single property of a markup class"""
     __metaclass__ = ABCMeta
 
     def __init__(self, name, value):
@@ -27,6 +16,7 @@ class Attribute:
         raise NotImplementedError( "Attribute method toString not implemented" )
 
 class AttributeList(Attribute):
+    """Abstract attribute list class defining a single property that utilises a list"""
     __metaclass__ = ABCMeta
 
     def __init__(self, name, value):
@@ -47,7 +37,7 @@ class AttributeList(Attribute):
 # ATTRIBUTE IMPLEMENTATIONS:
 
 class AttributeNumber(Attribute):
-
+    """A markup attribute that uses a float value"""
     def __init__(self, name, value):
         Attribute.__init__(self, name, float(value))
 
@@ -55,7 +45,7 @@ class AttributeNumber(Attribute):
         return self.name + ': ' + str(self.value) + ' (number)'
 
 class AttributeBool(Attribute):
-
+    """A markup attribute that uses a boolean value"""
     def __init__(self, name, value):
         v = True
         if value.lower() == 'false':
@@ -67,7 +57,7 @@ class AttributeBool(Attribute):
         return self.name + ': ' + str(self.value) + ' (bool)'
 
 class AttributeString(Attribute):
-
+    """A markup attribute that uses a string value"""
     def __init__(self, name, value):
         Attribute.__init__(self, name, value)
 
@@ -75,7 +65,7 @@ class AttributeString(Attribute):
         return self.name + ': ' + self.value + ' (string)'
 
 class AttributeStringList(AttributeList):
-
+    """A markup attribute that uses a list of string values"""
     def __init__(self, name, value):
         AttributeList.__init__(self, name, value)
 
@@ -85,12 +75,11 @@ class AttributeStringList(AttributeList):
         items = re.findall('\w.+?[\,|\]]', self.value, re.DOTALL)
 
         self.value = []
-        print('hi')
         for i in range(0, len(items)):
             self.value.append(items[i][0:(len(items[i]) - 1)])
 
 class AttributeTupleList(AttributeList):
-
+    """A markup attribute that uses a list of tuple values"""
     def __init__(self, name, value):
         AttributeList.__init__(self, name, value)
 
@@ -105,7 +94,7 @@ class AttributeTupleList(AttributeList):
             self.value.append((items[0], items[1]))
 
 class AttributeDictList(AttributeList):
-
+    """A markup attribute that uses a dictionary value"""
     def __init__(self, name, value):
         AttributeList.__init__(self, name, value)
         
@@ -118,5 +107,4 @@ class AttributeDictList(AttributeList):
         for i in range(0, len(tuples)):
             items = tuples[i][1:(len(tuples[i]) - 1)].split(',')
             self.value[items[0]] = float(items[1])
-
         

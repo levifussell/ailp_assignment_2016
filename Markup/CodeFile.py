@@ -1,31 +1,31 @@
 import re
 
 class CodeFile:
+    """Format for organising a markup string into a code class"""
 
     def __init__(self, text):
-
         self.text_unclean = text
         self.text_formatted = self.__createFormattedCodeText(self.text_unclean)
         self.linebreakIndices = self.__calculateLines(self.text_unclean)
 
     def __createFormattedCodeText(self, textUnformatted):
+        """Remove extra spaces and return characters in the string"""
         return re.sub('[\\n]|[\\s]', '', textUnformatted)
 
     def __calculateLines(self, textUnformatted):
+        """Calculate each return character in the string as a recorded line position in the code string"""
         linebreakIndices = []
         lineIndex = 0
         while lineIndex >= 0:
             lineIndex = textUnformatted.find('\n', lineIndex + 1)
             if lineIndex != -1:
                 linebreakIndices.append(lineIndex)
-                # print(lineIndex)
 
-        # for i in range(0, len(linebreakIndices)):
-        #     print(linebreakIndices[i])
         return linebreakIndices
 
     def getLineOfText(self, textSnippet):
-        
+        """Determine the location of a string snippet in the code text based on the pre-processed
+        line (return) positions"""
         try:
             indexOfText = self.text_unclean.find(textSnippet)
 
@@ -44,5 +44,6 @@ class CodeFile:
             raise IndexError('text not found in code file')
 
     def getCleanCodeText(self):
+        """Return the code string without extra characters"""
         return self.text_formatted
 

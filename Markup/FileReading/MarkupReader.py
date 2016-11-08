@@ -154,12 +154,10 @@ class MarkupReader:
     def __createThrowError(self, errorType, error_item, line):
         markupError = MarkupErrorFactory.createError(errorType)
         errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-        # self.thrownErrors.append(errorText) 
         _Log(errorText, _LoggerState.ERROR)
 
     def __createThrowErrorReg(self, markupErrorReg, error_item, line):
         errorText = markupErrorReg.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-        # self.thrownErrors.append(errorText) 
         _Log(errorText, _LoggerState.ERROR)
 
     def __computeError(self, codeFile, markupError):

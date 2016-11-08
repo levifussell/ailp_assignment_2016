@@ -1,26 +1,26 @@
-
 class ClassObject:
-
+    """A markup class object used for organsigin markup data into objects"""
     def __init__(self, name):
         self.name = name
         self.attributes = []
 
     def addAttribute(self, attribute):
+        """Add an attribute field to the class"""
         self.attributes.append(attribute)
 
     def findAttributeByName(self, nameSearch):
+        """Find an attribute based on its name"""
         for i in range(0, len(self.attributes)):
             if self.attributes[i].name == nameSearch:
                 return self.attributes[i]
         
         raise NameError('attribute name not found')
 
-    # return a list of the name and all important attribute names of this object
     def getDefinitionList(self):
+        """Return a list of the name and all important attribute names of this object"""
         defList = [self.name]
         
         for i in range(0, len(self.attributes)):
-            # if _Attribute_Manager.isImportantAttr(self.attributes[i]):
             defList.append(self.attributes[i].name)
 
         return defList
