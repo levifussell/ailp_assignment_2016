@@ -12,6 +12,7 @@ class ErrorTypes(Enum):
     ERR_NULLDATA = 6
     ERR_BADNEGATION = 7
     ERR_SAMENAME = 8
+    ERR_NONMATCHINGLIST = 9
 
 class MarkupErrorFactory:
     """Static factory class used to create errors with preset text and formats
@@ -29,6 +30,8 @@ class MarkupErrorFactory:
             return MarkupErrorRegEx('(<[^<|^>]*<[^<|^>]*)|(>[^<|^>]*>[^<|^>]*)', 'non-matching brackets found', ErrorHandlingTypes.SYNTAX)
         elif(errorType == ErrorTypes.ERR_UNKNOWNCHARACTER):
             return MarkupErrorRegEx('[^<|^>|^\/|^\w|^\[|^\]|^!|\,|\.]', 'illegal character found', ErrorHandlingTypes.SYNTAX)
+        elif(errorType == ErrorTypes.ERR_NONMATCHINGLIST):
+            return MarkupErrorRegEx('(\[[^(\])]+?[^[\w|\,|\]]]?)|([^[\w|\,|\]]]?[^(\[)]+?\])', 'non-matching list brackets found', ErrorHandlingTypes.SYNTAX)
         # Non-RegEx Errors
         elif(errorType == ErrorTypes.ERR_MATCHINGNAME):
             return MarkupError('Markup does not have matching opening and closing name', ErrorHandlingTypes.SYNTAX)

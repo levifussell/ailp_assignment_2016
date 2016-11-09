@@ -16,9 +16,11 @@ class CodeFile:
         """Calculate each return character in the string as a recorded line position in the code string"""
         linebreakIndices = []
         lineIndex = 0
+        lineCount = 0
         while lineIndex >= 0:
             lineIndex = textUnformatted.find('\n', lineIndex + 1)
             if lineIndex != -1:
+                lineCount += 1
                 linebreakIndices.append(lineIndex)
 
         return linebreakIndices

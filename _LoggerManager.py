@@ -1,6 +1,7 @@
 import threading
 import atexit
 import time
+import sys
 from enum import Enum
 
 # create a thread lock between the two threads
@@ -45,7 +46,7 @@ class _Logger_Thread (threading.Thread):
 
     # logging state; whatever the state is, all states below it will be printed.
     #  DEBUG is the highest, ERROR is the lowest
-    currentLogState = _LoggerState.ERROR
+    currentLogState = _LoggerState.DEBUG
 
     # dynamic list of log objects to print to the cmd
     logsToThrowList = []
@@ -95,6 +96,10 @@ class _Logger_Thread (threading.Thread):
                     _Logger_Thread.logsToThrowList.clear()
                     # release the lock for this thread
                     threadLock.release()
+
+                    if _Logger_Thread.count_errors > 0:
+                        print('\n---------------------\n---------------------\nERROR THROWN (see cmd output)\n---------------------\n---------------------\n')
+                        sys.exit()
 
         # at the end of this thread, print out the logging stats
         print('LOGGER OUTPUT:\n\tERRORS: {}\n\tWARNINGS: {}\n\tDEBUGS: {}'.

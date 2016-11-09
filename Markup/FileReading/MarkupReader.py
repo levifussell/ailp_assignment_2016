@@ -149,7 +149,8 @@ class MarkupReader:
                 codeString = codeString[len(regMarkupObjData):len(codeString)]
             except:
                 # markup objects must have a opening and closing. No closing should throw an error
-                self.__createThrowError(ErrorTypes.ERR_MATCHINGNAME, regMarkupObjName, codeFile.getLineOfText(regMarkupObjName))
+                print(codeString)
+                self.__createThrowError(ErrorTypes.ERR_MATCHINGNAME, markupObjName, codeFile.getLineOfText(regMarkupObjName))
 
     def __createThrowError(self, errorType, error_item, line):
         markupError = MarkupErrorFactory.createError(errorType)
@@ -186,5 +187,5 @@ class MarkupReader:
     def addErrorType(self, errorType):
         """Determine which errors to search for during the reading of markup files"""
         mError = MarkupErrorFactory.createError(errorType)
-        _Log('ADDING ERROR: ' + str(mError.errorLevel), _LoggerState.DEBUG)
+        _Log('ADDING ERROR: ' + str(errorType), _LoggerState.DEBUG)
         self.error_types.append(mError)

@@ -19,12 +19,18 @@
 
 # data_input = "<Argument>\n" + "\t<name>Arg1</name>\n" + "</Argument>" + "\n<Argument>\n" + "\t<name>Arg2</name>\n" + "</Argument>"
 
-import carneades.src.carneades.caes as cs
+IMPORT_CARNEADES = False
+
+if IMPORT_CARNEADES:
+    import carneades.src.carneades.caes as cs
+
 from Markup.CodeFile import CodeFile
 from Markup.Compilation.MarkupCompiler import MarkupCompiler
 from Markup.FileReading.MarkupReader import MarkupReader, ErrorTypes
 from Markup.MarkupClass.Attribute import AttributeTupleList
-from Markup.CarneadesWrite.CarneadesWriter import CarneadesWriter
+
+if IMPORT_CARNEADES:
+    from Markup.CarneadesWrite.CarneadesWriter import CarneadesWriter
 
 from _LoggerManager import _Logger_Thread, _Log
 
@@ -51,14 +57,16 @@ def beginMarkupRead(dataString):
     mlreader = MarkupReader()
     mlreader.addErrorType(ErrorTypes.ERR_MATCHINGBRACKETS)
     mlreader.addErrorType(ErrorTypes.ERR_UNKNOWNCHARACTER)
+    mlreader.addErrorType(ErrorTypes.ERR_NONMATCHINGLIST)
     classObjs = mlreader.run(codeFile)
 
     mlcompiler = MarkupCompiler()
     caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES = mlcompiler.run(classObjs)
 
-    csWriter = CarneadesWriter()
-    csWriter.build(caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES)
-    csWriter.testBuild()
+    if IMPORT_CARNEADES:
+        csWriter = CarneadesWriter()
+        csWriter.build(caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES)
+        csWriter.testBuild()
 
     _Logger_Thread.programOverTime = time.time()
     _Logger_Thread.programOver = True
