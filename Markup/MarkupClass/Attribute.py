@@ -32,6 +32,7 @@ class AttributeList(Attribute):
 
     @abstractmethod
     def __extractList(self): 
+        """Method for dividing a string list into its component values""""
         raise NotImplementedError( "AttributeList method __extractList not implemented" )
 
 # ATTRIBUTE IMPLEMENTATIONS:
