@@ -14,7 +14,7 @@ class _LoggerState(Enum):
 # when calling this class it should create an error and add it to the global errors list
 class _Log (threading.Thread):
     """Calling this class locks the thread and adds a log to the logThrowList to be printed to the screen"""
-    
+
     def __init__(self, errorText, logState):
         threading.Thread.__init__(self)
 
@@ -29,7 +29,7 @@ class _Log (threading.Thread):
         """lock the thread and add this Log object to the list of logs to throw"""
         threadLock.acquire()
         try:
-            # add this log to the log list 
+            # add this log to the log list
             _Logger_Thread.logsToThrowList.append(self)
         finally:
             threadLock.release()
@@ -45,7 +45,7 @@ class _Logger_Thread (threading.Thread):
 
     # logging state; whatever the state is, all states below it will be printed.
     #  DEBUG is the highest, ERROR is the lowest
-    currentLogState = _LoggerState.DEBUG
+    currentLogState = _LoggerState.ERROR
 
     # dynamic list of log objects to print to the cmd
     logsToThrowList = []
@@ -109,4 +109,3 @@ class _Logger_Thread (threading.Thread):
     def getLogState():
         """Get the allowed logging state"""
         return _Logger_Thread.currentLogState
-        

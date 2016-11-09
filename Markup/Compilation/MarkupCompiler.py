@@ -23,7 +23,7 @@ class CaernadesObjectLayouts:
         # check if the hashes are already made, if not, create it and cache it
         if len(CaernadesObjectLayouts.allObjHashesCache) == 0:
             CaernadesObjectLayouts.allObjHashesCache = CaernadesObjectLayouts.__getHashCodes()
-        
+
         # compare each hash against the object hash to make sure at least one is right
         #  and therefore the object is a legal object to be made
         for i in range(0, len(CaernadesObjectLayouts.allObjHashesCache)):
@@ -53,7 +53,7 @@ class CaernadesObjectLayouts:
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'proof']))
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'negate']))
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'negate', 'proof']))
-        
+
         # Argument Constructors
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Argument', 'name', 'conclusion', 'propositions', 'exceptions', 'weight']))
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Argument', 'name', 'conclusion', 'propositions', 'weight']))
@@ -98,11 +98,11 @@ class MarkupCompiler:
 
             # itterate through each markup object
             for cObj in classObjects:
-                
+
                 # determine if a markup object is able to compile to a Caernades class
                 cDefList = cObj.getDefinitionList()
                 isCaeObj = CaernadesObjectLayouts.checkObjIsCaernadesObj(cDefList)
-                
+
                 # create unknown-object error if object isn't made with correct constructor
                 if isCaeObj == False:
                     self.__createThrowError(ErrorTypes.ERR_HASHCLASSOBJECT, cObj.name, 'unk.')
@@ -155,6 +155,8 @@ class MarkupCompiler:
 
             for caes in caesCAES:
                 _Log(caes.toString(), _LoggerState.DEBUG)
+
+            return caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES
 
             _Log('...compilation successful...\n', _LoggerState.WARNING)
 
@@ -230,7 +232,7 @@ class MarkupCompiler:
         for i in range(0, len(caesProps)):
             p_name = caesProps[i].name
             p_proof = caesProps[i].proof
-            proofTuples += '(' + str(p_name) + ',' + str(p_proof) + ')' 
+            proofTuples += '(' + str(p_name) + ',' + str(p_proof) + ')'
 
         proofTuples += ']'
 
@@ -253,7 +255,7 @@ class MarkupCompiler:
         for i in range(0, len(caesArgs)):
             a_name = caesArgs[i].name
             a_weight = caesArgs[i].weight
-            weights += '(' + str(a_name) + ',' + str(a_weight) + ')' 
+            weights += '(' + str(a_name) + ',' + str(a_weight) + ')'
 
         weights += '}'
 
@@ -278,4 +280,4 @@ class MarkupCompiler:
         markupError = MarkupErrorFactory.createError(errorType)
         errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
         # self.thrownErrors.append(errorText)
-        _Log(errorText, _LoggerState.ERROR) 
+        _Log(errorText, _LoggerState.ERROR)

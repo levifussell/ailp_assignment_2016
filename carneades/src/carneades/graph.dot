@@ -1,0 +1,23 @@
+digraph G{ 
+arg1 [color="black", fillcolor="pink", width=.75, shape=box, style="filled"]; 
+"murder" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+"-murder" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+"intent" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+"kill" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+arg2 [color="black", fillcolor="pink", width=.75, shape=box, style="filled"]; 
+"-intent" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+"witness1" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+"unreliable1" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+arg3 [color="black", fillcolor="pink", width=.75, shape=box, style="filled"]; 
+"witness2" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+"unreliable2" [color="black", fillcolor="lightblue", fixedsize=true, width=1  shape="circle", style="filled"]; 
+"murder" -> "arg1" ; 
+"arg1" -> "intent" ; 
+"arg1" -> "kill" ; 
+"intent" -> "arg2" ; 
+"arg2" -> "witness1" ; 
+"arg2" -> "unreliable1" ; 
+"-intent" -> "arg3" ; 
+"arg3" -> "witness2" ; 
+"arg3" -> "unreliable2" ; 
+}

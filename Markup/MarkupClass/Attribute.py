@@ -12,7 +12,7 @@ class Attribute:
         self.value = value
 
     @abstractmethod
-    def toString(self): 
+    def toString(self):
         raise NotImplementedError( "Attribute method toString not implemented" )
 
 class AttributeList(Attribute):
@@ -31,8 +31,8 @@ class AttributeList(Attribute):
         return finalStr + ' (list ' + str(type(self.value)) + ')'
 
     @abstractmethod
-    def __extractList(self): 
-        """Method for dividing a string list into its component values""""
+    def __extractList(self):
+        """Method for dividing a string list into its component values"""
         raise NotImplementedError( "AttributeList method __extractList not implemented" )
 
 # ATTRIBUTE IMPLEMENTATIONS:
@@ -116,7 +116,7 @@ class AttributeDictList(AttributeList):
     """A markup attribute that uses a dictionary value"""
     def __init__(self, name, value):
         AttributeList.__init__(self, name, value)
-        
+
         self.__extractList()
 
         if not isinstance(self.value, dict):
@@ -129,4 +129,3 @@ class AttributeDictList(AttributeList):
         for i in range(0, len(tuples)):
             items = tuples[i][1:(len(tuples[i]) - 1)].split(',')
             self.value[items[0]] = float(items[1])
-        

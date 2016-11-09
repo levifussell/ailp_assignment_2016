@@ -1,29 +1,30 @@
 # READING FILES INTO CAES:
-# 
+#
 # --PROPOSITIONS:
 # <Proposition>
 #   <name>NAME</name>
 #   <truth>TRUE</truth>
 # </Proposition>
-# 
+#
 # --ARGUEMENTS:
 # <Argument>
 #   <propositions>[P1, P2, P3]</propositions>
 #   <exceptions>[P1, P2, P3]</exceptions>
 #   <outcome>PROPOSITION</outcome>
 # </Arguement>
-# 
+#
 # --
-# 
-# 
+#
+#
 
 # data_input = "<Argument>\n" + "\t<name>Arg1</name>\n" + "</Argument>" + "\n<Argument>\n" + "\t<name>Arg2</name>\n" + "</Argument>"
 
+import carneades.src.carneades.caes as cs
 from Markup.CodeFile import CodeFile
 from Markup.Compilation.MarkupCompiler import MarkupCompiler
 from Markup.FileReading.MarkupReader import MarkupReader, ErrorTypes
-
 from Markup.MarkupClass.Attribute import AttributeTupleList
+from Markup.CarneadesWrite.CarneadesWriter import CarneadesWriter
 
 from _LoggerManager import _Logger_Thread, _Log
 
@@ -53,7 +54,11 @@ def beginMarkupRead(dataString):
     classObjs = mlreader.run(codeFile)
 
     mlcompiler = MarkupCompiler()
-    mlcompiler.run(classObjs)
+    caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES = mlcompiler.run(classObjs)
+
+    csWriter = CarneadesWriter()
+    csWriter.build(caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES)
+    csWriter.testBuild()
 
     _Logger_Thread.programOverTime = time.time()
     _Logger_Thread.programOver = True

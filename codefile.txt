@@ -1,39 +1,56 @@
 <Proposition>
-    <name>name</name>
-    <truth>True</truth>
+    <name>kill</name>
 </Proposition>
-
 <Proposition>
-    <name>not_name</name>
-    <negate>name</negate>
+    <name>intent</name>
+    <proof>beyond_reasonable_doubt</proof>
 </Proposition>
-
+<Proposition>
+    <name>neg_intent</name>
+    <negate>intent</negate>
+</Proposition>
 <Proposition>
     <name>murder</name>
-    <truth>False</truth>
+</Proposition>
+<Proposition>
+    <name>witness1</name>
+</Proposition>
+<Proposition>
+    <name>unreliable1</name>
+</Proposition>
+<Proposition>
+    <name>witness2</name>
+</Proposition>
+<Proposition>
+    <name>unreliable2</name>
 </Proposition>
 
 <!>Comment on something</!>
 
 <Argument>
-    <!>Comment on something</!>
-    <weight>0.7</weight>
-    <name>argument1</name>
-    <conclusion>name</conclusion>
-    <propositions>[name, not_name]</propositions>
-    <exceptions>[name]</exceptions>
+    <weight>0.8</weight>
+    <name>arg1</name>
+    <conclusion>murder</conclusion>
+    <propositions>[kill, intent]</propositions>
 </Argument>
 
+<Argument>
+    <weight>0.3</weight>
+    <name>arg2</name>
+    <conclusion>intent</conclusion>
+    <propositions>[witness1]</propositions>
+    <exceptions>[unreliable1]</exceptions>
+</Argument>
 
-
-<Argument><name>argument2</name>
-    <conclusion>prop2</conclusion>
-    <weight>0.2</weight>
-    <propositions>[murder]</propositions>
-    <exceptions>[murder, not_name]</exceptions>
+<Argument>
+    <weight>0.8</weight>
+    <name>arg3</name>
+    <conclusion>neg_intent</conclusion>
+    <propositions>[witness2]</propositions>
+    <exceptions>[unreliable2]</exceptions>
 </Argument>
 
 <CAES>
     <name>caes1</name>
-    <assumptions>[murder, not_name]</assumptions>
+    <assumptions>[kill, witness1, witness2, unreliable2]</assumptions>
 </CAES>
