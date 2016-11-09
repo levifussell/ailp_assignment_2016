@@ -51,8 +51,8 @@ class CaernadesObjectLayouts:
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'truth', 'proof']))
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name']))
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'proof']))
+        hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'proof', 'negate']))
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'negate']))
-        hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'negate', 'proof']))
 
         # Argument Constructors
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Argument', 'name', 'conclusion', 'propositions', 'exceptions', 'weight']))
@@ -170,9 +170,10 @@ class MarkupCompiler:
         """compile all propositions by checking for no name duplicates and
         negated appropriate propositions"""
 
+        BadNegTagNaming = True
         for j in range(0, len(caesProps)):
 
-            # two props cannot have the same name
+            # two props cannot have the same name and truth value
             if i != j and caesProps[i].name == caesProps[j].name:
                 self.__createThrowError(ErrorTypes.ERR_SAMENAME, 'Proposition: ' + caesProps[i].name, 'unk.')
 
@@ -181,13 +182,18 @@ class MarkupCompiler:
                  if isinstance(caesProps[i], CaesProposition) and i != j:
                     if caesProps[i].negateTag == caesProps[j].name:
                         caesProps[i].truth = not(caesProps[j].truth)
-                        caesProps[i].negateTag = None
+                        caesProps[i].proof = None
+                        # caesProps[i].negateTag = None
+                        BadNegTagNaming = False
                         break
 
-        #  if the negateTag has not been erased, then the negate tag was named
-        #   wrongly or crashed and an error should be thrown
-        if caesProps[i].negateTag != None:
-            self.__createThrowError(ErrorTypes.ERR_BADNEGATION, 'Proposition: ' + caesProps[i].name, 'unk.')
+        #  if negtag but no proposition was found, create the positive proposition
+        if BadNegTagNaming and caesProps[i].negateTag != None:
+            propPos = CaesProposition([])
+            propPos.name = caesProps[i].negateTag
+            caesProps.append(propPos)
+            self.__propositionCompile(i, caesProps)
+            # self.__createThrowError(ErrorTypes.ERR_BADNEGATION, 'Proposition: ' + caesProps[i].name, 'unk.')
 
     def __argumentCompile(self, i, caesProps, caesArgs):
         """compile all arguments by checking for no name duplicates and
@@ -203,24 +209,61 @@ class MarkupCompiler:
         numCorrectProps = 0
         numCorrectExps = 0
 
-        for j in range(0, len(caesProps)):
-
-            # check that all propositions exits
-            for p in range(0, len(caesArgs[i].propositions)):
+        # check that all propositions exits
+        for p in range(0, len(caesArgs[i].propositions)):
+            propExists = False
+            for j in range(0, len(caesProps)):
                 if caesProps[j].name == caesArgs[i].propositions[p]:
                     numCorrectProps += 1
+                    propExists = True
 
-            # check that all exceptions exits
-            for p in range(0, len(caesArgs[i].exceptions)):
+            if propExists == False:
+                propDynamic = CaesProposition([])
+                propDynamic.name = caesArgs[i].propositions[p]
+                if propDynamic.name[0:4] == 'neg_':
+                    propDynamic.negateTag = propDynamic.name[4:len(propDynamic.name)]
+
+                caesProps.append(propDynamic)
+                self.__propositionCompile(len(caesProps) - 1, caesProps)
+
+        # check that all exceptions exits
+        for p in range(0, len(caesArgs[i].exceptions)):
+            expExists = False
+            for j in range(0, len(caesProps)):
                 if caesProps[j].name == caesArgs[i].exceptions[p]:
                     numCorrectExps += 1
+                    expExists = True
+
+            if expExists == False:
+                expDynamic = CaesProposition([])
+                expDynamic.name = caesArgs[i].exceptions[p]
+                if expDynamic.name[0:4] == 'neg_':
+                    expDynamic.negateTag = expDynamic.name[4:len(expDynamic.name)]
+
+                caesProps.append(expDynamic)
+                self.__propositionCompile(len(caesProps) - 1, caesProps)
+
+        # check that conclusion exists
+        concExists = False
+        for j in range(0, len(caesProps)):
+            if caesProps[j].name == caesArgs[i].conclusion:
+                concExists = True
+
+        if concExists == False:
+            concDynamic = CaesProposition([])
+            concDynamic.name = caesArgs[i].conclusion
+            if concDynamic.name[0:4] == 'neg_':
+                concDynamic.negateTag = concDynamic.name[4:len(concDynamic.name)]
+
+            caesProps.append(concDynamic)
+            self.__propositionCompile(len(caesProps) - 1, caesProps)
 
         # throw errors if the number of prop/excep found are not the amount expected
-        if numCorrectProps != len(caesArgs[i].propositions):
-            self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'Argument - propositions: ' + caesArgs[i].name, 'unk.')
-
-        if numCorrectExps != len(caesArgs[i].exceptions):
-            self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'Argument - exceptions: ' + caesArgs[i].name, 'unk.')
+        # if numCorrectProps != len(caesArgs[i].propositions):
+        #     self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'Argument - propositions: ' + caesArgs[i].name, 'unk.')
+        #
+        # if numCorrectExps != len(caesArgs[i].exceptions):
+        #     self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'Argument - exceptions: ' + caesArgs[i].name, 'unk.')
 
     def __proofOfStandardCompile(self, caesProps, caesProofStnd):
         """compile all ProofsOfStandard by getting the propositions and

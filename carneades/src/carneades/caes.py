@@ -838,6 +838,12 @@ def arg_demo():
     caes.acceptable(murder)
     caes.acceptable(murder.negate())
 
+    print(ps)
+
+    print(argset)
+
+    print(neg_intent)
+
 
 DOCTEST = False
 

@@ -46,10 +46,13 @@ class _Logger_Thread (threading.Thread):
 
     # logging state; whatever the state is, all states below it will be printed.
     #  DEBUG is the highest, ERROR is the lowest
-    currentLogState = _LoggerState.DEBUG
+    currentLogState = _LoggerState.ERROR
 
     # dynamic list of log objects to print to the cmd
     logsToThrowList = []
+
+    # record list of all errors
+    errorsList = []
 
     # recording the types of logs thrown
     count_errors = 0
@@ -87,6 +90,7 @@ class _Logger_Thread (threading.Thread):
                         # document the log states processed
                         if errLogState == _LoggerState.ERROR:
                             _Logger_Thread.count_errors += 1
+                            _Logger_Thread.errorsList.append(_Logger_Thread.logsToThrowList[i].errorText)
                         elif errLogState == _LoggerState.WARNING:
                             _Logger_Thread.count_warnings += 1
                         elif errLogState == _LoggerState.DEBUG:
@@ -99,6 +103,8 @@ class _Logger_Thread (threading.Thread):
 
                     if _Logger_Thread.count_errors > 0:
                         print('\n---------------------\n---------------------\nERROR THROWN (see cmd output)\n---------------------\n---------------------\n')
+                        for i in range(0, len(_Logger_Thread.errorsList)):
+                            print(_Logger_Thread.errorsList[i] + '\n')
                         sys.exit()
 
         # at the end of this thread, print out the logging stats

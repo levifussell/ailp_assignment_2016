@@ -6,7 +6,7 @@ class CarneadesWriter:
 
     def __init__(self):
         self.propositions = {}
-        self.arguments = {}
+        self.arguments = []
         self.argumentSet = None
         self.proofOfStandards = []
         self.argumentWeights = []
@@ -28,8 +28,8 @@ class CarneadesWriter:
             testData += str(self.propositions[prop]) + '\n\t'
 
         testData += '}\n\nArguments:{\n\t'
-        for arg in self.arguments:
-            testData += str(self.arguments[arg]) + '\n\t'
+        for i in range(0, len(self.arguments)):
+            testData += str(self.arguments[i]) + '\n\t'
 
         testData += '}\n\nProofStandards:{\n\t'
         for s in range(0, len(self.proofOfStandards)):
@@ -50,13 +50,17 @@ class CarneadesWriter:
         self.CAESs[0].acceptable(self.__getPropositionByName('murder'))
         self.CAESs[0].acceptable(self.__getPropositionByName('murder').negate())
 
-        _Log(testData, _LoggerState.DEBUG)
+        _Log(testData, _LoggerState.WARNING)
 
     def __buildPropositions(self, caesProps):
 
         for i in range(0, len(caesProps)):
-            prop = cs.PropLiteral(caesProps[i].name, polarity=caesProps[i].truth)
-            self.propositions[caesProps[i].name] = prop
+            if caesProps[i].negateTag != None:
+                prop = cs.PropLiteral(caesProps[i].negateTag, polarity=caesProps[i].truth)
+                self.propositions[caesProps[i].name] = prop
+            else:
+                prop = cs.PropLiteral(caesProps[i].name, polarity=caesProps[i].truth)
+                self.propositions[caesProps[i].name] = prop
 
     def __buildArguments(self, caesArgs):
 
@@ -74,14 +78,14 @@ class CarneadesWriter:
             conclusion = self.__getPropositionByName(caesArgs[i].conclusion)
 
             arg = cs.Argument(conclusion, premises=props, exceptions=exps)
-            self.arguments[caesArgs[i].name] = arg
+            self.arguments.append(arg)
 
     def __buildArgumentSet(self):
 
         self.argumentSet = cs.ArgumentSet()
 
-        for argName in self.arguments:
-            self.argumentSet.add_argument(self.arguments[argName])
+        for i in range(0, len(self.arguments)):
+            self.argumentSet.add_argument(self.arguments[i])
 
     def __buildProofOfStandards(self, caesProps):
 
@@ -89,8 +93,9 @@ class CarneadesWriter:
         proofTuples = []
 
         for i in range(0, len(caesProps)):
-            proofTuple = (self.__getPropositionByName(caesProps[i].name), caesProps[i].proof)
-            proofTuples.append(proofTuple)
+            if caesProps[i].proof != None:
+                proofTuple = (self.__getPropositionByName(caesProps[i].name), caesProps[i].proof)
+                proofTuples.append(proofTuple)
 
         ps = cs.ProofStandard(proofTuples, default='scintilla')
         # only 1 possible set of proof of standards for now
@@ -125,6 +130,3 @@ class CarneadesWriter:
     # get data
     def __getPropositionByName(self, propName):
         return self.propositions[propName]
-
-    def __getArgumentByName(self, argName):
-        return self.arguments[argName]

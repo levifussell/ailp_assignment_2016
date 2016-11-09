@@ -16,7 +16,7 @@ class CaesClass:
             self.processAttribute(attributes[i])
 
     @abstractmethod
-    def processAttribute(self, attribute): 
+    def processAttribute(self, attribute):
         """Abstract method to process a single attribute from markup to Caernades"""
         raise NotImplementedError( "CaesClass method processAttribute not implemented" )
 
@@ -81,12 +81,12 @@ class CaesArgument(CaesClass):
 
         elif attribute.name == 'exceptions':
             self.exceptions = attribute.value
-        
+
         elif attribute.name == 'weight':
             self.weight = attribute.value
 
     def toString(self):
-        return 'Argument: ' + str(self.name) + ': ' + str(self.propositions) + ', ' + str(self.exceptions) + ' => ' + str(self.conclusion) + ' (' + str(self.weight) + ')' 
+        return 'Argument: ' + str(self.name) + ': ' + str(self.propositions) + ', ' + str(self.exceptions) + ' => ' + str(self.conclusion) + ' (' + str(self.weight) + ')'
 
 class CaesProofOfStandards(CaesClass):
     """Caernades ProofOfStandard skeleton class that converts markup to a managable
@@ -102,7 +102,7 @@ class CaesProofOfStandards(CaesClass):
 
         if attribute.name == 'name':
             self.name = attribute.value
-        
+
         elif attribute.name == 'proofPairs':
             self.proofPairs = attribute.value
 
@@ -122,7 +122,7 @@ class CaesArgumentWeights(CaesClass):
     def processAttribute(self, attribute):
         if attribute.name == 'name':
             self.name = attribute.value
-        
+
         elif attribute.name == 'weights':
             self.weights = attribute.value
 
