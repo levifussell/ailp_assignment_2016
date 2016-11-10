@@ -17,7 +17,7 @@ The _Carneades Markup Language_ is a basic markup language that is used to simpl
 
 **classes**
 
-The simplified implementation uses only two layers of markup to describe different Carneades classes. The highest order line, 
+The simplified implementingimplementation uses only two layers of markup to describe different Carneades classes. The highest order line, 
 
 ```xml
 <CMLObject>...</CMLObject>
@@ -99,8 +99,8 @@ Some syntactical notes:
   2. _Number_: any attribute that has only a float value is a number (i.e. 0.6)
   3. _Bool_: any attribute that contains the word true/false with any capitalisation is a bool. This overrides a string type
   4. _StringList_: any attribute that starts and ends with '[...]' and contains comma-seperated strings is a string list
-* Creating each proposition for the arguments is not strictly necessary. Arguments will intuitively add propositions that are missing from implementation. There are a few special cases:
-  1. If the _proof_ value of a proposition needs to be set to a value other than the default, 'scintilla', then a proposition must be predefined before the argument(s).
+* Defining each proposition before the arguments is not strictly necessary. Arguments will intuitively add propositions that are missing from implementation (this will not happen with the _CAES assumptions attribute_; these propositions must be predefined in an argument/proposition). There are a few special cases:
+  1. If the _proof_ value of a proposition needs to be set to a value other than the default value, 'scintilla', then a proposition must be predefined before the argument(s).
   2. If a _negated_ proposition needs to be implemented, this can be done by adding the exact string '\_neg' to the start of the proposition's name, like so: 
   ```xml
   ...
@@ -108,3 +108,11 @@ Some syntactical notes:
   ...
   ```
   (NOTE: ```neg_prop3``` will make 2 propositions if ```prop3``` has not been defined earlier: ```prop3``` and ```-prop3```)
+
+**compiling**
+CML aims to simplify Carneades implimentations by minimising the quantity of code needed to prepare a new _CAES_ object. Therefore a design decision was made to remove the creation of _Audiences_, _ProofStandard_ lists, _ArgumentWeights_ and _ArgumentSets_. Each of these are instead compiled in the background. This results in a few limiting tradeoffs. Compilation of each class is described below:
+* _ArgumentSet_: all arguments in the system are added to one argument set in order of creation.
+* _ProofStandard_: the _proof attribute_ value is taken from all propositions in the system and compiled into a list of tuples.
+* _ArgumentWeights_: the _weight attribute_ value is taken from all arguments in the system and compiled into a dictionary.
+* _Audience_: the _assumptions attribute_ value is taken from the _CAES class_ and the previously compiled _ArgumentWeights_ is used
+A _CAES_ object is then compiled at the end using the background objects.
