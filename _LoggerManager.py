@@ -8,13 +8,19 @@ from enum import Enum
 threadLock = threading.Lock()
 
 class _LoggerState(Enum):
+    """Possible states of the Log, from lowest to highest"""
     ERROR = 1
     WARNING = 2
     DEBUG = 3
 
 # when calling this class it should create an error and add it to the global errors list
 class _Log (threading.Thread):
-    """Calling this class locks the thread and adds a log to the logThrowList to be printed to the screen"""
+    """
+    Calling this class locks the thread and adds a log to the logThrowList to be printed to the screen
+    @param daemon: don't keep program open if only daemon threads exist
+    @param errorText: text describing the error to print to the log
+    @param logState: type of logging state to determine if this error should be written
+    """
 
     def __init__(self, errorText, logState):
         threading.Thread.__init__(self)
@@ -28,11 +34,13 @@ class _Log (threading.Thread):
 
     def run(self):
         """lock the thread and add this Log object to the list of logs to throw"""
+        # lock this thread
         threadLock.acquire()
         try:
             # add this log to the log list
             _Logger_Thread.logsToThrowList.append(self)
         finally:
+            # release the lock
             threadLock.release()
 
 class _Logger_Thread (threading.Thread):
@@ -46,7 +54,7 @@ class _Logger_Thread (threading.Thread):
 
     # logging state; whatever the state is, all states below it will be printed.
     #  DEBUG is the highest, ERROR is the lowest
-    currentLogState = _LoggerState.ERROR
+    currentLogState = _LoggerState.DEBUG
 
     # dynamic list of log objects to print to the cmd
     logsToThrowList = []
@@ -101,11 +109,14 @@ class _Logger_Thread (threading.Thread):
                     # release the lock for this thread
                     threadLock.release()
 
+                    # if an error has been logged
                     if _Logger_Thread.count_errors > 0:
+                        # print errors and show log status
                         print('\n---------------------\n---------------------\nERROR THROWN (see cmd output)\n---------------------\n---------------------\n')
                         for i in range(0, len(_Logger_Thread.errorsList)):
                             print(_Logger_Thread.errorsList[i] + '\n')
                         _Logger_Thread.printLoggingStats()
+                        # close the program to avoid crashing
                         sys.exit()
 
         # at the end of this thread, print out the logging stats

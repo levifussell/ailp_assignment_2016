@@ -2,9 +2,9 @@
 asfjsakjr198r2j8r_%)@)(@$@$)(j2j2fjaijfk
 ajfkasfklajsfklajfkla
 ksjveioaec1
-</!>
+<!>
 
-<!> Propositions </!>
+<!> Propositions <!>
 
 <Proposition>
     <name>own_car</name>
@@ -16,9 +16,9 @@ ksjveioaec1
     <proof>preponderance</proof>
 </Proposition>
 
-<!> ARGUMENTS </!>
+<!> ARGUMENTS <!>
 
-    <!> ticket </!>
+    <!> ticket <!>
 <Argument>
     <name>arg_for_revoking_ticket_1</name>
     <conclusion>ticket_revoked</conclusion>
@@ -38,7 +38,7 @@ ksjveioaec1
     <weight>0.6</weight>
 </Argument>
 
-    <!> car </!>
+    <!> car <!>
 <Argument>
     <name>arg_for_owning_a_car</name>
     <conclusion>own_car</conclusion>
@@ -53,15 +53,17 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 <Argument>
+    <!> here we write the name of the argument: <!>
     <name>arg_for_not_owning_a_car_2</name>
-    <conclusion>neg_own_car</conclusion>
+    <conclusion>neg_own_car</conclusion> <!> NOTE: 'neg_' used to negate the proposition created above<!>
     <premises>[car_stolen]</premises>
     <weight>0.8</weight>
 </Argument>
 
-    <!> parking </!>
+    <!> parking <!>
 <Argument>
     <name>arg_for_not_legal_parking</name>
+    <!> here 'neg_' is used without a predefined prop. therefore the compiler will make one <!>
     <conclusion>neg_parking_legal</conclusion>
     <premises>[visible_parking_signs, neg_permit_valid]</premises>
     <weight>0.8</weight>
@@ -80,7 +82,7 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 
-    <!> permit </!>
+    <!> permit <!>
 <Argument>
     <name>arg_for_permit_valid</name>
     <conclusion>permit_valid</conclusion>
@@ -88,7 +90,7 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 
-    <!> parking exceptions </!>
+    <!> parking exceptions <!>
 <Argument>
     <name>arg_for_parking_exception_1</name>
     <conclusion>parking_exception</conclusion>
@@ -102,7 +104,7 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 
-<!> CAES </!>
+<!> CAES <!>
 
 <CAES>
     <name>caes1</name>

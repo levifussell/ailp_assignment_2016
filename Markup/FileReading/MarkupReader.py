@@ -122,7 +122,7 @@ class MarkupReader(ErrorThrowable):
         """Remove all comments from a codefile. This should be done before any processing"""
         try:
             # find all <!>...</!> pairings in the codefile
-            regComments = re.findall('<!>.+?</!>', codeString, re.DOTALL)
+            regComments = re.findall('<!>.+?<!>', codeString, re.DOTALL)
 
             # itterate through each comment and remove it from the code file
             for i in range(0, len(regComments)):

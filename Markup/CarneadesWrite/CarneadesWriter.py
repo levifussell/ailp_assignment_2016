@@ -63,8 +63,8 @@ class CarneadesWriter:
         testData += '\n'
 
         # test the CAES system
-        self.CAESs[0].acceptable(self.__getPropositionByName('give_citizenship'))
-        self.CAESs[0].acceptable(self.__getPropositionByName('give_citizenship').negate())
+        self.CAESs[0].acceptable(self.__getPropositionByName('ticket_revoked'))
+        self.CAESs[0].acceptable(self.__getPropositionByName('ticket_revoked').negate())
 
         _Log(testData, _LoggerState.WARNING)
 
