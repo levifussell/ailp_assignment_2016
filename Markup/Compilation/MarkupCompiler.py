@@ -8,7 +8,10 @@ from .CaesClassFactory import CaesClassFactory, CaesProposition, CaesArgument, C
 from _LoggerManager import _Log, _LoggerState
 
 class CaernadesObjectLayouts:
-    """Static class that defines the skeleton structure of different Caernades classes"""
+    """Static class that defines the skeleton structure of different Caernades classes
+    @param(static) allObjHashesCache: cache of the hashed constructors of all the
+        Carneades Classes
+    """
 
     # hashe codes are not loaded on compile but when they are first requested
     allObjHashesCache = []
@@ -77,7 +80,10 @@ class CaernadesObjectLayouts:
 
 class MarkupCompiler(ErrorThrowable):
     """Class for compiling markup objects into Caernades-managable classes. This class
-    also does a second order of checking for errors with consistent naming of objects, etc."""
+    also does a second order of checking for errors with consistent naming of objects, etc.
+    @param __attrFactory: attribute factory to dynamically create generic attributes
+    @param __caesClassFactory: caesClass factory to create generic caes classes
+    """
 
     def __init__(self):
         self.__attrFactory = AttributeFactory()
@@ -89,8 +95,7 @@ class MarkupCompiler(ErrorThrowable):
         try:
             _Log('...begin compiling...', _LoggerState.WARNING)
 
-            # lists of different compiled classes
-            #  TODO: make dictionary?
+            # lists of different compiled carneades classes
             caesProps = []
             caesArgs = []
             caesProofStnd = []
@@ -121,8 +126,10 @@ class MarkupCompiler(ErrorThrowable):
                             caesArgs.append(caesClass)
                         elif isinstance(caesClass, CaesCAES):
                             caesCAES.append(caesClass)
-                    else: pass
-                    # TODO: throw exception here
+                    else:
+                        self.__createThrowError(ErrorTypes.ERR_HASHCLASSOBJECT, cObj.name, 'unk.')
+                        _Log('...compilation failed...\n', _LoggerState.ERROR)
+                        return None
 
             # process each proposition
             for i in range(0, len(caesProps)):
@@ -135,13 +142,13 @@ class MarkupCompiler(ErrorThrowable):
             # create ProofOfStandard from propositions
             self.__proofOfStandardCompile(caesProps, caesProofStnd)
 
-            # create ArgumentWeights from propositions
+            # create ArgumentWeights from arguments
             self.__argumentWeightsCompile(caesArgs, caesArgWeights)
 
             # process and create final CAES
             self.__caesCompile(caesCAES, caesProofStnd, caesArgWeights, caesProps)
 
-            # print objects
+            # print objects for debugging
             for prop in caesProps:
                 _Log(prop.toString(), _LoggerState.DEBUG)
 
@@ -157,6 +164,7 @@ class MarkupCompiler(ErrorThrowable):
             for caes in caesCAES:
                 _Log(caes.toString(), _LoggerState.DEBUG)
 
+            # return the compiled caes classes
             return caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES
 
             _Log('...compilation successful...\n', _LoggerState.WARNING)
@@ -166,11 +174,11 @@ class MarkupCompiler(ErrorThrowable):
             if classObjects == None or len(classObjects) == 0:
                 self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'compiler', 'unk.')
 
-    # compile all propositions (used epecially for the negated oness)
     def __propositionCompile(self, i, caesProps):
         """compile all propositions by checking for no name duplicates and
         negated appropriate propositions"""
 
+        # record for determining no matching negation
         BadNegTagNaming = True
         for j in range(0, len(caesProps)):
 
@@ -181,10 +189,10 @@ class MarkupCompiler(ErrorThrowable):
             # if this is a negated prop:
             if caesProps[i].negateTag != None:
                  if isinstance(caesProps[i], CaesProposition) and i != j:
+                    #  find the proposition this object is a negation of and use its values
                     if caesProps[i].negateTag == caesProps[j].name:
                         caesProps[i].truth = not(caesProps[j].truth)
                         caesProps[i].proof = None
-                        # caesProps[i].negateTag = None
                         BadNegTagNaming = False
                         break
 
@@ -267,7 +275,7 @@ class MarkupCompiler(ErrorThrowable):
 
         proofTuples += ']'
 
-        # generate appropriate attributes to hand-make a markup object
+        # generate appropriate attributes to hand-build a markup object
         attrProofStnds = []
         attrProofStnds.append(self.__attrFactory.createAttribute('proofPairs', proofTuples))
         attrProofStnds.append(self.__attrFactory.createAttribute('name', 'PoS'))
@@ -316,10 +324,3 @@ class MarkupCompiler(ErrorThrowable):
             # throw error because assumption does not exist as a proposition
             if existsProp == False:
                 self.__createThrowError(ErrorTypes.ERR_BADASSUMPTIONS, str(caesCAES[0].assumptions[i]), 'unk.')
-
-    # def __createThrowError(self, errorType, error_item, line):
-    #     super().__createThrowError(self, errorType, error_item, line)
-    #     markupError = MarkupErrorFactory.createError(errorType)
-    #     errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-    #     # self.thrownErrors.append(errorText)
-    #     _Log(errorText, _LoggerState.ERROR)

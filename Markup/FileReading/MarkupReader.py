@@ -10,8 +10,12 @@ from _LoggerManager import _Log, _Logger_Thread, _LoggerState
 import re
 
 class MarkupReader(ErrorThrowable):
-    """This class reads a markup file and converts the markup data to markup objects
-    for easy compilation into Caernades via the compiler"""
+    """
+    This class reads a markup file and converts the markup data to markup objects
+    for easy compilation into Caernades via the compiler
+    @param error_types: the types of regex errors that this markup reader will
+        use when searching for syntax errors
+    """
 
     def __init__(self):
         self.error_types = []
@@ -21,10 +25,12 @@ class MarkupReader(ErrorThrowable):
 
         _Log('...begin reading file...', _LoggerState.WARNING)
 
+        # get the cleaned code from the codefile
         codeString = codeFile.getCleanCodeText()
+        # first remove all comments from the code
         codeString_noComments = self.__removeComments(codeString)
 
-        # first check the file for any obvious syntactical errors
+        # second check the file for any obvious syntactical errors
         # _Log(codeString_noComments, _LoggerState.DEBUG)
         self.__computeErrors(codeString_noComments, codeFile)
 
@@ -60,9 +66,9 @@ class MarkupReader(ErrorThrowable):
         """Convert a markup data stack read from the file to markup objects by reading
         off the stack and dynamically creating markup objects"""
 
-        # Attribute is defined in the stack as: a Variable with a Value below it in depth
+        # Attribute is defined in the stack as: a 'Variable' with a 'Value' below it in depth
         queueAttributes = []
-        # Class is defined in the stack as: a Variable with multiple Variables below it in depth
+        # Class is defined in the stack as: a 'Variable' with 'Variable(s)' below it in depth
         listClassObjs = []
 
         # itterate through stack until end
@@ -89,7 +95,7 @@ class MarkupReader(ErrorThrowable):
                 variable = stackData.pop()
 
                 # check that a value is not followed by a value
-                if variable.type == 'value': 
+                if variable.type == 'value':
                     # throw error for having value, value pair
                     self.__createThrowError(ErrorTypes.ERR_BADASSIGNMENTVALUE, variable.data, 'unk.')
                 else:
@@ -102,7 +108,7 @@ class MarkupReader(ErrorThrowable):
                 classObj = ClassObject(_a.data)
 
                 while len(queueAttributes) > 0:
-                    # get value, variable pair from queue as a class attribute
+                    # get value/variable pair from queue as a class attribute
                     #  and add it to the class
                     attrML = queueAttributes.pop()
                     attrObj = AttributeFactory.createAttribute(attrML[0], attrML[1])
@@ -115,7 +121,7 @@ class MarkupReader(ErrorThrowable):
     def __removeComments(self, codeString):
         """Remove all comments from a codefile. This should be done before any processing"""
         try:
-            # find all <!>...<!> pairings in the codefile
+            # find all <!>...</!> pairings in the codefile
             regComments = re.findall('<!>.+?</!>', codeString, re.DOTALL)
 
             # itterate through each comment and remove it from the code file
@@ -180,21 +186,18 @@ class MarkupReader(ErrorThrowable):
                 self.__createThrowError(ErrorTypes.ERR_MATCHINGNAME, markupObjName, codeFile.getLineOfText(regMarkupObjName))
 
     def __createThrowError(self, errorType, error_item, line):
+        """inherited from ErrorThrowable"""
         super(MarkupReader, self).createThrowError(errorType, error_item, line)
 
     def __createThrowErrorReg(self, markupErrorReg, error_item, line):
+        """inherited from ErrorThrowable"""
         super(MarkupReader, self).createThrowErrorReg(markupErrorReg, error_item, line)
-    #     errorText = markupErrorReg.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-    #     _Log(errorText, _LoggerState.ERROR)
 
     def __computeError(self, codeString, codeFile, markupError):
         """Run a regular expression error over a code file to check for syntax errors"""
         error_throw = ' '
 
         try:
-            # get the code string without spaces or returns or tabs
-            # codeString = codeFile.getCleanCodeText()
-
             # search for syntax error
             error_re = re.search(markupError.regularExpression, codeString, re.DOTALL)
 

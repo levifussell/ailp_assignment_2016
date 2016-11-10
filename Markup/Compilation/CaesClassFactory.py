@@ -5,13 +5,14 @@ from _LoggerManager import _Log
 class CaesClassFactory:
     """A factory class for creating different Caernades objects. Is not static so
     that it can be extended to create different factories for different compilation
-    methods or Caernades sessions"""
+    methods or Caernades sessions
+    @param initialised: whether this factory has been created (not used currently)
+    """
     def __init__(self):
-
         self.initialised = True
 
     def createCaesClass(self, name, attributes):
-
+        """create the caesClass object associated with the name ID"""
         if name == 'Proposition':
             return CaesProposition(attributes)
 
@@ -28,4 +29,3 @@ class CaesClassFactory:
             return CaesCAES(attributes)
 
         else: pass
-            

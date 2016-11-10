@@ -19,7 +19,7 @@
 
 # data_input = "<Argument>\n" + "\t<name>Arg1</name>\n" + "</Argument>" + "\n<Argument>\n" + "\t<name>Arg2</name>\n" + "</Argument>"
 
-IMPORT_CARNEADES = False
+IMPORT_CARNEADES = True
 
 if IMPORT_CARNEADES:
     import carneades.src.carneades.caes as cs
@@ -45,14 +45,14 @@ from curses.textpad import Textbox, rectangle
 # SIMULATE A FILE READ HERE----
 # REGEX FOR GENERIC MARK UP LANGUAGE--------------------------------------
 
-def beginMarkupRead(dataString):
+def beginMarkupRead(codeFile):
 
     # start error thread
     _THREAD_log = _Logger_Thread()
     _THREAD_log.start()
 
     # create a CodeFile object
-    codeFile = CodeFile(dataString)
+    codeFile = CodeFile(codeFile)
 
     mlreader = MarkupReader()
     mlreader.addErrorType(ErrorTypes.ERR_MATCHINGBRACKETS)
@@ -85,19 +85,19 @@ def beginMarkupRead(dataString):
 
 if __name__ == '__main__':
 
-    file_read = open('codeTest1.txt', 'r')
-    fileData = file_read.read()
-
-    print('parsing code file: ')
-    print(fileData + '\n\n')
-    print('PARSED:')
+    # file_read = open('codeTest2.txt', 'r')
+    # fileData = file_read.read()
+    #
+    # print('parsing code file: ')
+    # print(fileData + '\n\n')
+    # print('PARSED:')
     # readInputFileString(fileData)
     # fileData = re.sub('[\\n]|[\\s]', '', fileData)
     # # fileData = re.sub('\\s', '', fileData)
     # print(fileData)
 
     # TODO: UNCOMMENT TO RUN COMPILER ON TEXT
-    beginMarkupRead(fileData)
+    beginMarkupRead('codeTest2.txt')
 
     # -----------------------------------------
     # stdscr = curses.initscr()

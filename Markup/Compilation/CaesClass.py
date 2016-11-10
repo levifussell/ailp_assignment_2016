@@ -6,8 +6,10 @@ from abc import ABCMeta, abstractmethod
 #   OTHERWISE THROW ERROR
 
 class CaesClass:
-    """An abstract Caernades class used to build Caernades skeleton objects
-    from markup data"""
+    """
+    An abstract Caernades class used to build Caernades skeleton objects
+    from markup data
+    """
     __metaclass__ = ABCMeta
 
     def __init__(self, attributes):
@@ -27,7 +29,12 @@ class CaesClass:
 
 class CaesProposition(CaesClass):
     """Caernades Proposition skeleton class that converts markup to a managable
-    format to be used in caernades"""
+    format to be used in caernades
+    @param name: name ID
+    @param truth: truth value
+    @param proof: standard proof
+    @param negateTag: name ID of proposition this is a negation of. Can be null
+    """
 
     def __init__(self, attributes):
         self.name = None
@@ -38,7 +45,6 @@ class CaesProposition(CaesClass):
         CaesClass.__init__(self, attributes)
 
     def processAttribute(self, attribute):
-
         if attribute.name == 'name':
             self.name = attribute.value
 
@@ -57,7 +63,13 @@ class CaesProposition(CaesClass):
 
 class CaesArgument(CaesClass):
     """Caernades Argument skeleton class that converts markup to a managable
-    format to be used in caernades"""
+    format to be used in caernades
+    @param name: name ID
+    @param conclusion: conclusion proposition
+    @param propositions: list of proposition premises
+    @param exceptions: list of proposition exceptions
+    @param weight: weight to assign this argument
+    """
 
     def __init__(self, attributes):
         self.name = None
@@ -69,7 +81,6 @@ class CaesArgument(CaesClass):
         CaesClass.__init__(self, attributes)
 
     def processAttribute(self, attribute):
-
         if attribute.name == 'name':
             self.name = attribute.value
 
@@ -90,7 +101,10 @@ class CaesArgument(CaesClass):
 
 class CaesProofOfStandards(CaesClass):
     """Caernades ProofOfStandard skeleton class that converts markup to a managable
-    format to be used in caernades"""
+    format to be used in caernades
+    @param name: name ID
+    @param proofPairs: list of proofStandard/proposition tuples
+    """
 
     def __init__(self, attributes):
         self.name = None
@@ -111,7 +125,10 @@ class CaesProofOfStandards(CaesClass):
 
 class CaesArgumentWeights(CaesClass):
     """Caernades ArgumentWeights skeleton class that converts markup to a managable
-    format to be used in caernades"""
+    format to be used in caernades
+    @param name: name Id
+    @param weights: dictionary of argument name IDs to weights
+    """
 
     def __init__(self, attributes):
         self.name = None
@@ -131,7 +148,12 @@ class CaesArgumentWeights(CaesClass):
 
 class CaesCAES(CaesClass):
     """Caernades CAES skeleton class that converts markup to a managable
-    format to be used in caernades"""
+    format to be used in caernades
+    @param name: name ID
+    @param assumptions: list of proposition assumptions made by the audience
+    @param argWeights: CaesArgumentWeights
+    @param proofOfStandards: CaesProofOfStandards
+    """
 
     def __init__(self, attributes):
         self.name = None
@@ -142,18 +164,11 @@ class CaesCAES(CaesClass):
         CaesClass.__init__(self, attributes)
 
     def processAttribute(self, attribute):
-
         if attribute.name == 'name':
             self.name = attribute.value
 
         elif attribute.name == 'assumptions':
             self.assumptions = attribute.value
-
-        # elif attribute.name == 'argWeights':
-        #     self.argWeights = attribute.value
-
-        # elif attribute.name == 'proofs':
-        #     self.proofOfStandards = attribute.value
 
     def toString(self):
         return 'CAES: ' + str(self.name) + ': asmp=' + str(self.assumptions) + ', argwgt=' + str(self.argWeights) + ', proofs=' + str(self.proofOfStandards)
