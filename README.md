@@ -98,7 +98,7 @@ Some syntactical notes:
   2. _Number_: any attribute that has only a float value is a number (i.e. 0.6)
   3. _Bool_: any attribute that contains the word true/false with any capitalisation is a bool. This overrides a string type
   4. _StringList_: any attribute that starts and ends with '[...]' and contains comma-seperated strings is a string list
-* Defining each proposition before the arguments is not strictly necessary. Arguments will intuitively add propositions that are missing from implementation (this will not happen with the _CAES assumptions attribute_; these propositions must be predefined in an argument/proposition). There are a few special cases:
+* Defining each proposition before the arguments is not strictly necessary. Arguments will intuitively add propositions that are missing from implementation (this will not happen with the _CAES assumptions attribute_; these propositions must be predefined in an argument/proposition. It is important to note that this implementation can be dangerous; miss-spelt proposition names will be treated as _new_ propositions. Be careful!). There are a few special cases:
   1. If the _proof_ value of a proposition needs to be set to a value other than the default value, 'scintilla', then a proposition must be predefined before the argument(s).
   2. If a _negated_ proposition needs to be implemented, this can be done by adding the exact string '\_neg' to the start of the proposition's name, like so: 
   ```xml
@@ -109,9 +109,28 @@ Some syntactical notes:
   (NOTE: ```neg_prop3``` will make 2 propositions if ```prop3``` has not been defined earlier: ```prop3``` and ```-prop3```)
 
 **compiling**
+
 CML aims to simplify Carneades implimentations by minimising the quantity of code needed to prepare a new _CAES_ object. Therefore a design decision was made to remove the creation of _Audiences_, _ProofStandard_ lists, _ArgumentWeights_ and _ArgumentSets_. Each of these are instead compiled in the background. This results in a few limiting tradeoffs. Compilation of each class is described below:
 * _ArgumentSet_: all arguments in the system are added to one argument set in order of creation.
 * _ProofStandard_: the _proof attribute_ value is taken from all propositions in the system and compiled into a list of tuples.
 * _ArgumentWeights_: the _weight attribute_ value is taken from all arguments in the system and compiled into a dictionary.
 * _Audience_: the _assumptions attribute_ value is taken from the _CAES class_ and the previously compiled _ArgumentWeights_ is used
 A _CAES_ object is then compiled at the end using the background objects.
+
+# System Design
+
+**this section is irrelevant to knowing how to use CML, but briefly outlines the underlying process of reading and compiling a CML file:**
+
+**Reading a CML file**
+
+A CML file is read recursively until the end of the file. Each markup object is read and processed and then seperated into its smaller markup object components and read and processed until the recursion reaches an end. The markup objects are sequentially added to an 'object stack'.
+
+The next step is to read from this 'object stack'. If a value is popped from the stack, than the next value is popped (which should be a variable) and the value/variable pair is added to a 'attribute queue' as an attribute. This process continues until a variable is popped without a value pairing before it. This varaible should be a markup class and therefore all attributes are taken from the attribute queue and combined with the popped variable to make a markup class (variable/attribute-queue). This process repeats until the stack is depleated.
+
+The reading of the CML file ends with outputting a list of generic markup objects, each containing a class name and a set of attributes.
+
+**Compiling the CML data**
+
+Compiling the CML data involves taking the generic markup classes and organising them into Carneades _Skeleton Classes_ (or 'CaesClasses'). A series of allowable constructors is defined that a markup object must comply to (at least one). From there the attributes and name of the markup object are analysed to classify it as a specific Caernades class.
+
+Once these _Skeleton Classes_ have been created they are handed to a _CarneadesWriter_ class which manages the transformation of _Skeleton Clases_ to actual Carneades classes. Once this has been performed, the whole process has finished and will display the end result of the Carneades argumentation system if no errors were encountered.
