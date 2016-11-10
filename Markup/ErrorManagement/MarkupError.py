@@ -1,3 +1,5 @@
+from _LoggerManager import _Log, _LoggerState
+
 from enum import Enum
 
 class ErrorHandlingTypes(Enum):
@@ -40,3 +42,12 @@ class MarkupErrorRegEx(MarkupError):
 
     def toString(self):
         return 'error (' + ErrorHandlingTypes.toString(self.errorLevel) + '): ' + self.errorText
+
+class ErrorThrowable:
+    """Interface for a class that can throw errors dynamically"""
+
+    def __createThrowError(self, errorType, error_item, line):
+        """throw a new error via the _Log and given a predefined error type"""
+        markupError = MarkupErrorFactory.createError(errorType)
+        errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
+        _Log(errorText, _LoggerState.ERROR)

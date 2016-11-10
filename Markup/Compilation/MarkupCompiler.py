@@ -1,4 +1,5 @@
 from Markup.ErrorManagement.MarkupErrorFactory import MarkupError, MarkupErrorFactory, ErrorHandlingTypes, ErrorTypes
+from Markup.ErrorManagement.MarkupError import ErrorThrowable
 from Markup.MarkupClass.ClassObject import ClassObject
 from Markup.MarkupClass.AttributeFactory import AttributeFactory
 
@@ -74,7 +75,7 @@ class CaernadesObjectLayouts:
 
         return hashTotal
 
-class MarkupCompiler:
+class MarkupCompiler(ErrorThrowable):
     """Class for compiling markup objects into Caernades-managable classes. This class
     also does a second order of checking for errors with consistent naming of objects, etc."""
 
@@ -189,11 +190,10 @@ class MarkupCompiler:
 
         #  if negtag but no proposition was found, create the positive proposition
         if BadNegTagNaming and caesProps[i].negateTag != None:
-            propPos = CaesProposition([])
-            propPos.name = caesProps[i].negateTag
-            caesProps.append(propPos)
+            # create the positive proposition for a negated prop.
+            self.__addDynamicProposition(caesProps[i].negateTag, caesProps, recompile=False)
+            # recompile the negated prop so it can find the new positive prop
             self.__propositionCompile(i, caesProps)
-            # self.__createThrowError(ErrorTypes.ERR_BADNEGATION, 'Proposition: ' + caesProps[i].name, 'unk.')
 
     def __argumentCompile(self, i, caesProps, caesArgs):
         """compile all arguments by checking for no name duplicates and
@@ -205,43 +205,27 @@ class MarkupCompiler:
             if caesArgs[i].name == caesArgs[j].name and i != j:
                 self.__createThrowError(ErrorTypes.ERR_SAMENAME, 'Argument: ' + caesArgs[i].name, 'unk.')
 
-        # check for correct naming of prop/exp
-        numCorrectProps = 0
-        numCorrectExps = 0
-
-        # check that all propositions exits
+        # check that all premise exits
         for p in range(0, len(caesArgs[i].propositions)):
             propExists = False
             for j in range(0, len(caesProps)):
                 if caesProps[j].name == caesArgs[i].propositions[p]:
-                    numCorrectProps += 1
                     propExists = True
 
+            # if the premise does not exist, create the proposition for it at compile time
             if propExists == False:
-                propDynamic = CaesProposition([])
-                propDynamic.name = caesArgs[i].propositions[p]
-                if propDynamic.name[0:4] == 'neg_':
-                    propDynamic.negateTag = propDynamic.name[4:len(propDynamic.name)]
-
-                caesProps.append(propDynamic)
-                self.__propositionCompile(len(caesProps) - 1, caesProps)
+                self.__addDynamicProposition(caesArgs[i].propositions[p], caesProps)
 
         # check that all exceptions exits
         for p in range(0, len(caesArgs[i].exceptions)):
             expExists = False
             for j in range(0, len(caesProps)):
                 if caesProps[j].name == caesArgs[i].exceptions[p]:
-                    numCorrectExps += 1
                     expExists = True
 
+            # if the exception does not exist, create the proposition for it at compile time
             if expExists == False:
-                expDynamic = CaesProposition([])
-                expDynamic.name = caesArgs[i].exceptions[p]
-                if expDynamic.name[0:4] == 'neg_':
-                    expDynamic.negateTag = expDynamic.name[4:len(expDynamic.name)]
-
-                caesProps.append(expDynamic)
-                self.__propositionCompile(len(caesProps) - 1, caesProps)
+                self.__addDynamicProposition(caesArgs[i].exceptions[p], caesProps)
 
         # check that conclusion exists
         concExists = False
@@ -249,21 +233,25 @@ class MarkupCompiler:
             if caesProps[j].name == caesArgs[i].conclusion:
                 concExists = True
 
+        # if the conclusion does not exist, create the proposition for it at compile time
         if concExists == False:
-            concDynamic = CaesProposition([])
-            concDynamic.name = caesArgs[i].conclusion
-            if concDynamic.name[0:4] == 'neg_':
-                concDynamic.negateTag = concDynamic.name[4:len(concDynamic.name)]
+            self.__addDynamicProposition(caesArgs[i].conclusion, caesProps)
 
-            caesProps.append(concDynamic)
+    def __addDynamicProposition(self, propNameToCreate, caesProps, recompile=True):
+        """Used for dynamic creation of propositions during compilation, given the name
+        of the proposition to copy"""
+        propDynamic = CaesProposition([])
+        propDynamic.name = propNameToCreate
+        # check if the proposition is a negated proposition
+        if propDynamic.name[0:4] == 'neg_':
+            # assign the neagtion tag to the proposition this prop. will negate
+            propDynamic.negateTag = propDynamic.name[4:len(propDynamic.name)]
+
+        # add the proposition to the list
+        caesProps.append(propDynamic)
+        # compile the new proposition
+        if recompile:
             self.__propositionCompile(len(caesProps) - 1, caesProps)
-
-        # throw errors if the number of prop/excep found are not the amount expected
-        # if numCorrectProps != len(caesArgs[i].propositions):
-        #     self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'Argument - propositions: ' + caesArgs[i].name, 'unk.')
-        #
-        # if numCorrectExps != len(caesArgs[i].exceptions):
-        #     self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'Argument - exceptions: ' + caesArgs[i].name, 'unk.')
 
     def __proofOfStandardCompile(self, caesProps, caesProofStnd):
         """compile all ProofsOfStandard by getting the propositions and
@@ -329,8 +317,9 @@ class MarkupCompiler:
             if existsProp == False:
                 self.__createThrowError(ErrorTypes.ERR_BADASSUMPTIONS, str(caesCAES[0].assumptions[i]), 'unk.')
 
-    def __createThrowError(self, errorType, error_item, line):
-        markupError = MarkupErrorFactory.createError(errorType)
-        errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-        # self.thrownErrors.append(errorText)
-        _Log(errorText, _LoggerState.ERROR)
+    # def __createThrowError(self, errorType, error_item, line):
+    #     super().__createThrowError(self, errorType, error_item, line)
+    #     markupError = MarkupErrorFactory.createError(errorType)
+    #     errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
+    #     # self.thrownErrors.append(errorText)
+    #     _Log(errorText, _LoggerState.ERROR)

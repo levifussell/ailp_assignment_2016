@@ -1,4 +1,5 @@
 from Markup.ErrorManagement.MarkupErrorFactory import MarkupError, MarkupErrorFactory, ErrorHandlingTypes, ErrorTypes
+from Markup.ErrorManagement.MarkupError import ErrorThrowable
 from Markup.MarkupClass.ClassObject import ClassObject
 from Markup.MarkupClass.AttributeFactory import AttributeFactory
 
@@ -8,7 +9,7 @@ from _LoggerManager import _Log, _Logger_Thread, _LoggerState
 
 import re
 
-class MarkupReader:
+class MarkupReader(ErrorThrowable):
     """This class reads a markup file and converts the markup data to markup objects
     for easy compilation into Caernades via the compiler"""
 
@@ -25,7 +26,7 @@ class MarkupReader:
 
         # if NO errors, continue processing the Markup
         if _Logger_Thread.count_errors == 0:
-            
+
             # recursively extract markup data into a markup stack
             stackData = []
             self.__regFindNextMarkupObj(codeFile.getCleanCodeText(), 0, stackData, codeFile)
@@ -46,7 +47,7 @@ class MarkupReader:
                 if _Logger_Thread.count_errors == 0:
                     _Log('...reading file successful...', _LoggerState.WARNING)
                     return listClassObjs
-                
+
         # failed to read markup via some error
         _Log('...reading file failed...', _LoggerState.ERROR)
         return None
@@ -67,11 +68,11 @@ class MarkupReader:
             _a = stackData.pop()
 
             # value and variables are defined as:
-            # 
+            #
             #  <variable>value</variable>
-            # 
+            #
             # ...or they can be:
-            # 
+            #
             # <variables>
             #   <variable>
             #       value
@@ -97,7 +98,7 @@ class MarkupReader:
 
                 # get all attributes and below in queue and make a class
                 classObj = ClassObject(_a.data)
-                
+
                 while len(queueAttributes) > 0:
                     # get value, variable pair from queue as a class attribute
                     #  and add it to the class
@@ -106,7 +107,7 @@ class MarkupReader:
                     classObj.addAttribute(attrObj)
 
                 listClassObjs.append(classObj)
-                
+
         return listClassObjs
 
     def __regFindNextMarkupObj(self, codeString, depth, stackData, codeFile):
@@ -141,10 +142,10 @@ class MarkupReader:
                 endIdx = len(regMarkupObjData) - len(markupObjName) - 3
                 # get the inner code inside the markup object
                 markupObjData = regMarkupObjData[startIdx:endIdx]
-                
+
                 # continue down the tree depth to find the next markup object
                 self.__regFindNextMarkupObj(markupObjData, depth + 1, stackData, codeFile)
-                
+
                 # remove the markup object from the codestring after processing
                 codeString = codeString[len(regMarkupObjData):len(codeString)]
             except:
@@ -152,10 +153,10 @@ class MarkupReader:
                 print(codeString)
                 self.__createThrowError(ErrorTypes.ERR_MATCHINGNAME, markupObjName, codeFile.getLineOfText(regMarkupObjName))
 
-    def __createThrowError(self, errorType, error_item, line):
-        markupError = MarkupErrorFactory.createError(errorType)
-        errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-        _Log(errorText, _LoggerState.ERROR)
+    # def __createThrowError(self, errorType, error_item, line):
+    #     markupError = MarkupErrorFactory.createError(errorType)
+    #     errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
+    #     _Log(errorText, _LoggerState.ERROR)
 
     def __createThrowErrorReg(self, markupErrorReg, error_item, line):
         errorText = markupErrorReg.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
@@ -168,7 +169,7 @@ class MarkupReader:
         try:
             # get the code string without spaces or returns or tabs
             codeString = codeFile.getCleanCodeText()
-            
+
             # search for syntax error
             error_re = re.search(markupError.regularExpression, codeString, re.DOTALL)
 

@@ -100,5 +100,5 @@
 
 <CAES>
     <name>caes1</name>
-    <assumptions>[car_documents, photo_of_parking_signs, visible_parking_signs, neg_permit_valid]</assumptions>
+    <assumptions>[car_documents, photo_of_parking_signs, neg_visible_parking_signs, neg_permit_valid]</assumptions>
 </CAES>
