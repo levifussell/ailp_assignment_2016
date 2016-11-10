@@ -1,15 +1,17 @@
 # AILP Assignment 2
 **2016**
 
-This assignment asks to implement a system for running a Carneades argumentation Python framework implementation via a raw text file. The syntax of the text file will be referred to as, _Carneades Markup Language_. Understanding this new markup langauge is described below:
+(NOTE: This README is best viewed in a Markdown viewer.)
+
+This assignment asks to implement a system for running a Carneades argumentation Python framework implementation via a raw text file. The syntax of the text file will be referred to as, _Carneades Markup Language_. Understanding this new markup language is described below:
 
 **running the test files**
 
-The test files that can be run are `codeTest1.txt`, `codeTest2.txt` and `codeTest3.txt` located in the directory `CodeTests/`. To run these files, run the file `main.py` in the cmd with python3.4 and type either `1`, `2` or `3`. The logger output mode can be set from the `\_Logger\_Thread` class in the `\_LoggerManager.py` file. Currently the Log behaviour is set to _WARNING_, but setting this to _DEBUG_ will give more intuitive output. Setting the Log to only _ERROR_ will make sure it only displays errors and the ouput Carneades, which is useful for analysing the results. (Note: the Log state must be on _WARNING_ or above to view the expected vs. actual output results of the argument.)
+The test files that can be run are `codeTest1.txt`, `codeTest2.txt` and `codeTest3.txt` located in the directory `CodeTests/`. To run these files, run the file `main.py` in the cmd with python3.4 and type either `1`, `2` or `3`. The logger output mode can be set from the `\_Logger\_Thread` class in the `\_LoggerManager.py` file. Currently the Log behaviour is set to _WARNING_, but setting this to _DEBUG_ will give more intuitive output. Setting the Log to only _ERROR_ will make sure it only displays errors and the output Carneades, which is useful for analysing the results. (Note: the Log state must be on _WARNING_ or above to view the expected vs. actual output results of the argument.)
 
 **Carneades Markup Language (CML)**
 
-The _Carneades Markup Language_ is a basic markup language that is used to simplify the compiling of Carneades Python programs. It immitates a simplified version of basic markup:
+The _Carneades Markup Language_ is a basic markup language that is used to simplify the compiling of Carneades Python programs. It imitates a simplified version of basic markup:
 
 ```xml
 <MarkupObject>
@@ -22,7 +24,7 @@ The _Carneades Markup Language_ is a basic markup language that is used to simpl
 
 **classes**
 
-The simplified markup implementation uses only two layers of markup to describe different Carneades classes. The highest order line, 
+The simplified markup implementation uses only two layers of markup to describe different Carneades classes. The highest order line,
 
 ```xml
 <CMLObject>...</CMLObject>
@@ -62,14 +64,14 @@ Order (as well as spacing) is irrelevant:
 <CMLObject>
 
   <CMLAttribute2> value_of_attribute2 </CMLAttribute2>
-  
+
   <CMLAttribute3> <!> comment about this attribute, etc... <!>
-    value_of_attribute3 
+    value_of_attribute3
   </CMLAttribute3>
-  
+
   <CMLAttribute1>value_of_attribute1</CMLAttribute1> </CMLObject>
 ```
-The _class/attribute_ combinations (constructors) for each class are displayed below. Optional _attributes_ are indicated by a comment: 
+The _class/attribute_ combinations (constructors) for each class are displayed below. Optional _attributes_ are indicated by a comment:
 
 ```xml
 <!>PROPOSITIONS<!>
@@ -108,7 +110,7 @@ Some syntactical notes:
   4. _StringList_: any attribute that starts and ends with '[...]' and contains comma-seperated strings
 * (IMPORTANT) Defining each proposition before the arguments is not strictly necessary. Arguments will intuitively add propositions that are missing from implementation (this will not happen with the _CAES assumptions attribute_, these propositions must be predefined in an argument/proposition. It is important to note that this implementation can be dangerous; miss-spelt proposition names will be treated as _new_ propositions. Be careful!). There are a few special cases:
   1. If the _proof_ value of a proposition needs to be set to a value other than the default value, 'scintilla', then a proposition must be predefined before the argument(s).
-  2. If a _negated_ proposition needs to be implemented, this can be done by adding the exact string 'neg\_' to the start of the proposition's name, like so: 
+  2. If a _negated_ proposition needs to be implemented, this can be done by adding the exact string 'neg\_' to the start of the proposition's name, like so:
   ```xml
   ...
   <premises>...[prop1, prop2, neg_prop3]...</premises>
@@ -118,7 +120,7 @@ Some syntactical notes:
 
 **compiling**
 
-CML aims to simplify Carneades implimentations by minimising the quantity of code needed to prepare a new _CAES_ object. Therefore a design decision was made to remove the creation of _Audiences_, _ProofStandard_ lists, _ArgumentWeights_ and _ArgumentSets_. Each of these are instead compiled in the background. This results in a few limiting tradeoffs. Compilation of each class is described below:
+CML aims to simplify Carneades implementations by minimising the quantity of code needed to prepare a new _CAES_ object. Therefore a design decision was made to remove the creation of _Audiences_, _ProofStandard_ lists, _ArgumentWeights_ and _ArgumentSets_. Each of these are instead compiled in the background. This results in a few limiting trade-offs. Compilation of each class is described below:
 * _ArgumentSet_: all arguments in the system are added to one argument set in order of creation.
 * _ProofStandard_: the _proof attribute_ value is taken from all propositions in the system and compiled into a list of tuples.
 * _ArgumentWeights_: the _weight attribute_ value is taken from all arguments in the system and compiled into a dictionary.
@@ -131,9 +133,9 @@ A _CAES_ object is then compiled at the end using the background objects.
 
 **reading a CML file**
 
-A CML file is read recursively until the end of the file. Each markup object is read and processed and then seperated into its smaller markup object components and read and processed until the recursion reaches an end. The markup objects are sequentially added to an 'object stack'.
+A CML file is read recursively until the end of the file. Each markup object is read and processed and then separated into its smaller markup object components and read and processed until the recursion reaches an end. The markup objects are sequentially added to an 'object stack'.
 
-The next step is to read from this 'object stack'. If a 'value' item is popped from the stack, than the next item is popped from the stack (which should be a 'variable' item) and the 'value'/'variable' pair is added to an _attribute queue_ as an attribute. This process continues until a 'variable' item is popped without a 'value' item pairing before it. This varaible should be a markup class and therefore all attributes are taken from the _attribute queue_ and combined with the popped 'variable' item to make a markup class ('variable'/_attribute-queue_). This process repeats until the stack is depleated.
+The next step is to read from this 'object stack'. If a 'value' item is popped from the stack, than the next item is popped from the stack (which should be a 'variable' item) and the 'value'/'variable' pair is added to an _attribute queue_ as an attribute. This process continues until a 'variable' item is popped without a 'value' item pairing before it. This variable should be a markup class and therefore all attributes are taken from the _attribute queue_ and combined with the popped 'variable' item to make a markup class ('variable'/_attribute-queue_). This process repeats until the stack is depleted.
 
 The reading of the CML file ends with outputting a list of generic markup objects, each containing a class name and a set of attributes.
 
