@@ -4,9 +4,11 @@
 This assignment asks to implement a system for running a Carneades argumentation Python framework implementation via a raw text file. The syntax of the text file will be referred to as, _Carneades Markup Language_. Understanding this new markup langauge is described below:
 
 **running the test files**
-TODO
+
+The test files that can be run are `codeTest1.txt`, `codeTest2.txt` and `codeTest3.txt` located in the directory `CodeTests/`. To run these files, run the file `main.py` in the cmd with python3.4 and type either `1`, `2` or `3`. The logger output mode can be set from the `\_Logger\_Thread` class in the `\_LoggerManager.py` file. Currently the Log behaviour is set to _WARNING_, but setting this to _DEBUG_ will give more intuitive output. Setting the Log to only _ERROR_ will make sure it only displays errors and the ouput Carneades, which is useful for analysing the results.
 
 **Carneades Markup Language (CML)**
+
 The _Carneades Markup Language_ is a basic markup language that is used to simplify the compiling of Carneades Python programs. It immitates a simplified version of basic markup:
 
 ```xml
