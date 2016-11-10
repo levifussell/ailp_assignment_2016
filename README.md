@@ -121,7 +121,7 @@ A _CAES_ object is then compiled at the end using the background objects.
 
 **this section is irrelevant to knowing how to use CML, but briefly outlines the underlying process of reading and compiling a CML file:**
 
-**Reading a CML file**
+**reading a CML file**
 
 A CML file is read recursively until the end of the file. Each markup object is read and processed and then seperated into its smaller markup object components and read and processed until the recursion reaches an end. The markup objects are sequentially added to an 'object stack'.
 
@@ -129,7 +129,7 @@ The next step is to read from this 'object stack'. If a value is popped from the
 
 The reading of the CML file ends with outputting a list of generic markup objects, each containing a class name and a set of attributes.
 
-**Compiling the CML data**
+**compiling the CML data**
 
 Compiling the CML data involves taking the generic markup classes and organising them into Carneades _Skeleton Classes_ (or 'CaesClasses'). A series of allowable constructors is defined that a markup object must comply to (at least one). From there the attributes and name of the markup object are analysed to classify it as a specific Caernades class.
 
