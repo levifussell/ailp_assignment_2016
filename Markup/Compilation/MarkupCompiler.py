@@ -1,5 +1,5 @@
 from Markup.ErrorManagement.MarkupErrorFactory import MarkupError, MarkupErrorFactory, ErrorHandlingTypes, ErrorTypes
-from Markup.ErrorManagement.MarkupError import ErrorThrowable
+from Markup.ErrorManagement.ErrorThrowable import ErrorThrowable
 from Markup.MarkupClass.ClassObject import ClassObject
 from Markup.MarkupClass.AttributeFactory import AttributeFactory
 

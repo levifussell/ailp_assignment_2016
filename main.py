@@ -19,7 +19,7 @@
 
 # data_input = "<Argument>\n" + "\t<name>Arg1</name>\n" + "</Argument>" + "\n<Argument>\n" + "\t<name>Arg2</name>\n" + "</Argument>"
 
-IMPORT_CARNEADES = True
+IMPORT_CARNEADES = False
 
 if IMPORT_CARNEADES:
     import carneades.src.carneades.caes as cs

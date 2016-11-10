@@ -1,5 +1,5 @@
 from Markup.ErrorManagement.MarkupErrorFactory import MarkupError, MarkupErrorFactory, ErrorHandlingTypes, ErrorTypes
-from Markup.ErrorManagement.MarkupError import ErrorThrowable
+from Markup.ErrorManagement.ErrorThrowable import ErrorThrowable
 from Markup.MarkupClass.ClassObject import ClassObject
 from Markup.MarkupClass.AttributeFactory import AttributeFactory
 
@@ -21,15 +21,19 @@ class MarkupReader(ErrorThrowable):
 
         _Log('...begin reading file...', _LoggerState.WARNING)
 
+        codeString = codeFile.getCleanCodeText()
+        codeString_noComments = self.__removeComments(codeString)
+
         # first check the file for any obvious syntactical errors
-        self.__computeErrors(codeFile)
+        # _Log(codeString_noComments, _LoggerState.DEBUG)
+        self.__computeErrors(codeString_noComments, codeFile)
 
         # if NO errors, continue processing the Markup
         if _Logger_Thread.count_errors == 0:
 
             # recursively extract markup data into a markup stack
             stackData = []
-            self.__regFindNextMarkupObj(codeFile.getCleanCodeText(), 0, stackData, codeFile)
+            self.__regFindNextMarkupObj(codeString_noComments, 0, stackData, codeFile)
 
             # check that no errors have been created since extracting data
             if _Logger_Thread.count_errors == 0:
@@ -77,19 +81,17 @@ class MarkupReader(ErrorThrowable):
             #   <variable>
             #       value
             #   </variable>
-            # </variable
+            # </variables>
 
             if _a.type == 'value':
                 # if value, get the next object in stack, which should
                 #  be the variable for the value
                 variable = stackData.pop()
 
-                # first check the variable is not a comment
-                if variable.data == '!':
-                    #TODO: do something if it is a comment
-                    _Log('COMMENT FOUND', _LoggerState.DEBUG)
-                elif variable.type == 'value': pass
-                    # TODO: throw error for having value, value pair
+                # check that a value is not followed by a value
+                if variable.type == 'value': 
+                    # throw error for having value, value pair
+                    self.__createThrowError(ErrorTypes.ERR_BADASSIGNMENTVALUE, variable.data, 'unk.')
                 else:
                     # add the value/variable object to a queue
                     queueAttributes.append([variable.data, _a.data])
@@ -110,6 +112,30 @@ class MarkupReader(ErrorThrowable):
 
         return listClassObjs
 
+    def __removeComments(self, codeString):
+        """Remove all comments from a codefile. This should be done before any processing"""
+        try:
+            # find all <!>...<!> pairings in the codefile
+            regComments = re.findall('<!>.+?</!>', codeString, re.DOTALL)
+
+            # itterate through each comment and remove it from the code file
+            for i in range(0, len(regComments)):
+                # debug statement printing comment
+                _Log('COMMENT FOUND: ' + regComments[i], _LoggerState.DEBUG)
+
+                # split the string and re-merge to remove the comment
+                codeStringSplit = codeString.split(regComments[i])
+                codeStringSum = ''
+                for i in range(0, len(codeStringSplit)):
+                    codeStringSum += codeStringSplit[i]
+                codeString = codeStringSum
+
+        except:
+            # if commenting fails, throw error
+            self.__createThrowError(ErrorTypes.ERR_BADCOMMENTS, 'unk.', 'unk.')
+
+        return codeString
+
     def __regFindNextMarkupObj(self, codeString, depth, stackData, codeFile):
         """given some markup code string, use regular expressions to read the string
         and convert it to a markup data stack via depth-first recursion"""
@@ -119,7 +145,7 @@ class MarkupReader(ErrorThrowable):
 
             try:
                 # get the name of the next markup obj
-                regMarkupObjName = re.search('<[\w|!]+?>', codeString, re.DOTALL).group(0)
+                regMarkupObjName = re.search('<[\w]+?>', codeString, re.DOTALL).group(0)
                 # trim the '< >' edges of the object
                 markupObjName = regMarkupObjName[1:len(regMarkupObjName) - 1]
                 # remove that object from the code string
@@ -153,37 +179,37 @@ class MarkupReader(ErrorThrowable):
                 print(codeString)
                 self.__createThrowError(ErrorTypes.ERR_MATCHINGNAME, markupObjName, codeFile.getLineOfText(regMarkupObjName))
 
-    # def __createThrowError(self, errorType, error_item, line):
-    #     markupError = MarkupErrorFactory.createError(errorType)
-    #     errorText = markupError.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-    #     _Log(errorText, _LoggerState.ERROR)
+    def __createThrowError(self, errorType, error_item, line):
+        super(MarkupReader, self).createThrowError(errorType, error_item, line)
 
     def __createThrowErrorReg(self, markupErrorReg, error_item, line):
-        errorText = markupErrorReg.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
-        _Log(errorText, _LoggerState.ERROR)
+        super(MarkupReader, self).createThrowErrorReg(markupErrorReg, error_item, line)
+    #     errorText = markupErrorReg.toString() + '  ' + '\'' + error_item + '\' at line ' + str(line)
+    #     _Log(errorText, _LoggerState.ERROR)
 
-    def __computeError(self, codeFile, markupError):
+    def __computeError(self, codeString, codeFile, markupError):
         """Run a regular expression error over a code file to check for syntax errors"""
         error_throw = ' '
 
         try:
             # get the code string without spaces or returns or tabs
-            codeString = codeFile.getCleanCodeText()
+            # codeString = codeFile.getCleanCodeText()
 
             # search for syntax error
             error_re = re.search(markupError.regularExpression, codeString, re.DOTALL)
 
             # if the error is found, throw it
             error_item = error_re.group(0)
+            print('herere')
             self.__createThrowErrorReg(markupError, error_item, codeFile.getLineOfText(error_item))
         except:
             # report debug info
             _Log('failed to throw error in markup reader: GOOD', _LoggerState.DEBUG)
 
-    def __computeErrors(self, codeFile):
+    def __computeErrors(self, codeString, codeFile):
         """Run some regular expression errors over a code file to check for syntax errors"""
         for i in range(0, len(self.error_types)):
-            self.__computeError(codeFile, self.error_types[i])
+            self.__computeError(codeString, codeFile, self.error_types[i])
 
     def addErrorType(self, errorType):
         """Determine which errors to search for during the reading of markup files"""

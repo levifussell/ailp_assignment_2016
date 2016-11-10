@@ -14,6 +14,8 @@ class ErrorTypes(Enum):
     ERR_SAMENAME = 8
     ERR_NONMATCHINGLIST = 9
     ERR_BADASSUMPTIONS = 10
+    ERR_BADCOMMENTS = 11
+    ERR_BADASSIGNMENTVALUE = 12
 
 class MarkupErrorFactory:
     """Static factory class used to create errors with preset text and formats
@@ -33,6 +35,10 @@ class MarkupErrorFactory:
             return MarkupErrorRegEx('[^<|^>|^\/|^\w|^\[|^\]|^!|\,|\.]', 'illegal character found', ErrorHandlingTypes.SYNTAX)
         elif(errorType == ErrorTypes.ERR_NONMATCHINGLIST):
             return MarkupErrorRegEx('(\[[^(\])]+?[^[\w|\,|\]]]?)|([^[\w|\,|\]]]?[^(\[)]+?\])', 'non-matching list brackets found', ErrorHandlingTypes.SYNTAX)
+        elif(errorType == ErrorTypes.ERR_BADCOMMENTS):
+            return MarkupError('Unknown bad comments found in code file', ErrorHandlingTypes.SYNTAX)
+        elif(errorType == ErrorTypes.ERR_BADASSIGNMENTVALUE):
+            return MarkupError('value cannot have another markup layer', ErrorHandlingTypes.SYNTAX)
         # Non-RegEx Errors
         elif(errorType == ErrorTypes.ERR_MATCHINGNAME):
             return MarkupError('Markup does not have matching opening and closing name', ErrorHandlingTypes.SYNTAX)

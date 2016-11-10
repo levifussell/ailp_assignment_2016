@@ -46,7 +46,7 @@ class _Logger_Thread (threading.Thread):
 
     # logging state; whatever the state is, all states below it will be printed.
     #  DEBUG is the highest, ERROR is the lowest
-    currentLogState = _LoggerState.ERROR
+    currentLogState = _LoggerState.DEBUG
 
     # dynamic list of log objects to print to the cmd
     logsToThrowList = []
