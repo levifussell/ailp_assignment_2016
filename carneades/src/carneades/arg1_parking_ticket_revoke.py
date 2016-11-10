@@ -106,7 +106,7 @@ ps = cs.ProofStandard(
 
 assumptions = {car_documents,
     photo_of_parking_signs,
-    visible_parking_signs_not,
+    visible_parking_signs,
     permit_valid_not
     }
 weights = {'arg_for_revoking_ticket_1':0.8,

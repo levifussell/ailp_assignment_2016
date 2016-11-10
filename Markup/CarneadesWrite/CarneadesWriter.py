@@ -47,8 +47,8 @@ class CarneadesWriter:
 
         testData += '\n'
 
-        self.CAESs[0].acceptable(self.__getPropositionByName('murder'))
-        self.CAESs[0].acceptable(self.__getPropositionByName('murder').negate())
+        self.CAESs[0].acceptable(self.__getPropositionByName('ticket_revoked'))
+        self.CAESs[0].acceptable(self.__getPropositionByName('ticket_revoked').negate())
 
         _Log(testData, _LoggerState.WARNING)
 

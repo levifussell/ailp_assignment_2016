@@ -76,7 +76,7 @@ class CaesArgument(CaesClass):
         elif attribute.name == 'conclusion':
             self.conclusion = attribute.value
 
-        elif attribute.name == 'propositions':
+        elif attribute.name == 'premises':
             self.propositions = attribute.value
 
         elif attribute.name == 'exceptions':

@@ -58,15 +58,24 @@ def beginMarkupRead(dataString):
     mlreader.addErrorType(ErrorTypes.ERR_MATCHINGBRACKETS)
     mlreader.addErrorType(ErrorTypes.ERR_UNKNOWNCHARACTER)
     mlreader.addErrorType(ErrorTypes.ERR_NONMATCHINGLIST)
-    classObjs = mlreader.run(codeFile)
+
+    if _Logger_Thread.count_errors == 0:
+        classObjs = mlreader.run(codeFile)
 
     mlcompiler = MarkupCompiler()
-    caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES = mlcompiler.run(classObjs)
+    caesProps = []
+    caesArgs = []
+    caesProofStnd = []
+    caesArgWeights = []
+    caesCAES = []
+    if _Logger_Thread.count_errors == 0:
+        caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES = mlcompiler.run(classObjs)
 
     if IMPORT_CARNEADES:
         csWriter = CarneadesWriter()
-        csWriter.build(caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES)
-        csWriter.testBuild()
+        if _Logger_Thread.count_errors == 0:
+            csWriter.build(caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES)
+            csWriter.testBuild()
 
     _Logger_Thread.programOverTime = time.time()
     _Logger_Thread.programOver = True
@@ -76,7 +85,7 @@ def beginMarkupRead(dataString):
 
 if __name__ == '__main__':
 
-    file_read = open('codefile.txt', 'r')
+    file_read = open('codeTest1.txt', 'r')
     fileData = file_read.read()
 
     print('parsing code file: ')

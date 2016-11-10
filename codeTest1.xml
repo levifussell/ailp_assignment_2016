@@ -1,4 +1,4 @@
-<!> Propositions <!>
+<!> Propositions </!>
 
 <Proposition>
     <name>own_car</name>
@@ -10,9 +10,9 @@
     <proof>preponderance</proof>
 </Proposition>
 
-<!> ARGUMENTS <!>
+<!> ARGUMENTS </!>
 
-    <!> ticket <!>
+    <!> ticket </!>
 <Argument>
     <name>arg_for_revoking_ticket_1</name>
     <conclusion>ticket_revoked</conclusion>
@@ -32,7 +32,7 @@
     <weight>0.6</weight>
 </Argument>
 
-    <!> car <!>
+    <!> car </!>
 <Argument>
     <name>arg_for_owning_a_car</name>
     <conclusion>own_car</conclusion>
@@ -53,8 +53,8 @@
     <weight>0.8</weight>
 </Argument>
 
-    <!> parking <!>
-Argument>
+    <!> parking </!>
+<Argument>
     <name>arg_for_not_legal_parking</name>
     <conclusion>neg_parking_legal</conclusion>
     <premises>[visible_parking_signs, neg_permit_valid]</premises>
@@ -74,7 +74,7 @@ Argument>
     <weight>0.8</weight>
 </Argument>
 
-    <!> permit <!>
+    <!> permit </!>
 <Argument>
     <name>arg_for_permit_valid</name>
     <conclusion>permit_valid</conclusion>
@@ -82,7 +82,7 @@ Argument>
     <weight>0.8</weight>
 </Argument>
 
-    <!> parking exceptions <!>
+    <!> parking exceptions </!>
 <Argument>
     <name>arg_for_parking_exception_1</name>
     <conclusion>parking_exception</conclusion>
@@ -96,8 +96,9 @@ Argument>
     <weight>0.8</weight>
 </Argument>
 
-<!> CAES <!>
+<!> CAES </!>
 
 <CAES>
-    <assumptions>[car_documents, photo_of_parking_signs, neg_visible_parking_signs, neg_permit_valid]</assumptions>
+    <name>caes1</name>
+    <assumptions>[car_documentss, photo_of_parking_signs, visible_parking_signs, neg_permit_valid]</assumptions>
 </CAES>

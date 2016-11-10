@@ -55,8 +55,8 @@ class CaernadesObjectLayouts:
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['Proposition', 'name', 'negate']))
 
         # Argument Constructors
-        hashObjs.append(CaernadesObjectLayouts.__hashObj(['Argument', 'name', 'conclusion', 'propositions', 'exceptions', 'weight']))
-        hashObjs.append(CaernadesObjectLayouts.__hashObj(['Argument', 'name', 'conclusion', 'propositions', 'weight']))
+        hashObjs.append(CaernadesObjectLayouts.__hashObj(['Argument', 'name', 'conclusion', 'premises', 'exceptions', 'weight']))
+        hashObjs.append(CaernadesObjectLayouts.__hashObj(['Argument', 'name', 'conclusion', 'premises', 'weight']))
 
         # CAES Constructors
         hashObjs.append(CaernadesObjectLayouts.__hashObj(['CAES', 'name', 'assumptions']))
@@ -138,7 +138,7 @@ class MarkupCompiler:
             self.__argumentWeightsCompile(caesArgs, caesArgWeights)
 
             # process and create final CAES
-            self.__caesCompile(caesCAES, caesProofStnd, caesArgWeights)
+            self.__caesCompile(caesCAES, caesProofStnd, caesArgWeights, caesProps)
 
             # print objects
             for prop in caesProps:
@@ -311,13 +311,23 @@ class MarkupCompiler:
         caesClass = self.__caesClassFactory.createCaesClass('ArgumentWeights', attrArgWeights)
         caesArgWeights.append(caesClass)
 
-    def __caesCompile(self, caesCAES, caesProofStnd, caesArgWeights):
+    def __caesCompile(self, caesCAES, caesProofStnd, caesArgWeights, caesProps):
         """compile all CAESs by getting proofsOfStandard and argumentWeights
         TODO: for now only 1 CAES item can be made; extend this to itterate through
         lists of argWeights and proofStnds"""
 
         caesCAES[0].argWeights = caesArgWeights[0].weights
         caesCAES[0].proofOfStandards = caesProofStnd[0].proofPairs
+
+        # check that all assumptions in the CAES class exist as propositions
+        for i in range(0, len(caesCAES[0].assumptions)):
+            existsProp = False
+            for j in range(0, len(caesProps)):
+                if caesCAES[0].assumptions[i] == caesProps[j].name:
+                    existsProp = True
+            # throw error because assumption does not exist as a proposition
+            if existsProp == False:
+                self.__createThrowError(ErrorTypes.ERR_BADASSUMPTIONS, str(caesCAES[0].assumptions[i]), 'unk.')
 
     def __createThrowError(self, errorType, error_item, line):
         markupError = MarkupErrorFactory.createError(errorType)

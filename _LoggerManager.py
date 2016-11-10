@@ -105,10 +105,16 @@ class _Logger_Thread (threading.Thread):
                         print('\n---------------------\n---------------------\nERROR THROWN (see cmd output)\n---------------------\n---------------------\n')
                         for i in range(0, len(_Logger_Thread.errorsList)):
                             print(_Logger_Thread.errorsList[i] + '\n')
+                        _Logger_Thread.printLoggingStats()
                         sys.exit()
 
         # at the end of this thread, print out the logging stats
-        print('LOGGER OUTPUT:\n\tERRORS: {}\n\tWARNINGS: {}\n\tDEBUGS: {}'.
+        _Logger_Thread.printLoggingStats()
+
+    @staticmethod
+    def printLoggingStats():
+        """Write out the count of errors/warnings/debugs during the logging period"""
+        print('LOGGER OUTPUT:\n\tERRORS: {}\n\tWARNINGS: {}\n\tDEBUGS: {}\n'.
             format(_Logger_Thread.count_errors, _Logger_Thread.count_warnings, _Logger_Thread.count_debugs))
 
     @staticmethod

@@ -13,6 +13,7 @@ class ErrorTypes(Enum):
     ERR_BADNEGATION = 7
     ERR_SAMENAME = 8
     ERR_NONMATCHINGLIST = 9
+    ERR_BADASSUMPTIONS = 10
 
 class MarkupErrorFactory:
     """Static factory class used to create errors with preset text and formats
@@ -43,5 +44,8 @@ class MarkupErrorFactory:
             return MarkupError('Proposition does not exist to be negated', ErrorHandlingTypes.COMPILER)
         elif(errorType == ErrorTypes.ERR_SAMENAME):
             return MarkupError('Two objects cannot have the same name', ErrorHandlingTypes.COMPILER)
+        elif(errorType == ErrorTypes.ERR_BADASSUMPTIONS):
+            return MarkupError('Assumptions attribute in CAES do not exist', ErrorHandlingTypes.COMPILER)
+
 
         return MarkupError('unkown error found', ErrorHandlingTypes.UNKNOWN)
