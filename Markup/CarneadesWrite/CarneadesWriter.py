@@ -1,8 +1,11 @@
+from Markup.ErrorManagement.MarkupErrorFactory import MarkupError, MarkupErrorFactory, ErrorHandlingTypes, ErrorTypes
+from Markup.ErrorManagement.ErrorThrowable import ErrorThrowable
+
 from _LoggerManager import _Log, _LoggerState
 
 import carneades.src.carneades.caes as cs
 
-class CarneadesWriter:
+class CarneadesWriter(ErrorThrowable):
     """
     class for converting Skeleton Carneades classes directly to Carneades objects.
     Also runs a caernades simulation of the data
@@ -26,6 +29,11 @@ class CarneadesWriter:
 
     def build(self, caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES):
         """begin the sequential build of all Carneades object"""
+
+        if caesProps == None or caesArgs == None or caesProofStnd == None or caesArgWeights == None or caesCAES == None:
+            self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'unk.', 'unk.')
+            return
+
         self.__buildPropositions(caesProps)
         self.__buildArguments(caesArgs)
         self.__buildArgumentSet(caesArgs)
@@ -34,9 +42,12 @@ class CarneadesWriter:
         self.__buildAudience(caesCAES)
         self.__buildCAES()
 
-    def testBuild(self):
+    def testBuild(self, testProp, expectedTestResult):
         """Writes out the values of the Carneades objets for debugging and also simulates
         test on a specific argument to test the CAES system is working"""
+
+        if self.argumentSet == None:
+            return
 
         testData = 'Propositions: {\n\t'
         for prop in self.propositions:
@@ -63,10 +74,12 @@ class CarneadesWriter:
         testData += '\n'
 
         # test the CAES system
-        self.CAESs[0].acceptable(self.__getPropositionByName('ticket_revoked'))
-        self.CAESs[0].acceptable(self.__getPropositionByName('ticket_revoked').negate())
+        ouputTest = self.CAESs[0].acceptable(self.__getPropositionByName(testProp))
+        # self.CAESs[0].acceptable(self.__getPropositionByName('ticket_revoked').negate())
 
         _Log(testData, _LoggerState.WARNING)
+
+        _Log('\n\nTEST:-----------------------------\nexpected result of ' + testProp + '= ' + str(expectedTestResult) + '\nactual result of ' + testProp + '= ' + str(ouputTest) + '\n----------------------------------\n', _LoggerState.WARNING)
 
     def __buildPropositions(self, caesProps):
         """Create Carneades Proposition objects from all proposition caesClass objects"""
@@ -160,3 +173,8 @@ class CarneadesWriter:
     def __getPropositionByName(self, propName):
         """get a proposition from the dictionary given a name key"""
         return self.propositions[propName]
+
+    # error handling
+    def __createThrowError(self, errorType, error_item, line):
+        """inherited from ErrorThrowable"""
+        super(CarneadesWriter, self).createThrowError(errorType, error_item, line)

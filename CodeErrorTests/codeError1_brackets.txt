@@ -1,0 +1,10 @@
+<!>
+------------------------------------------
+This file tests error handling of brackets
+------------------------------------------
+<!>
+
+<Proposition>>
+  <name>prop1</name>
+  <truth>False</truth>
+</Proposition>

@@ -1,4 +1,12 @@
-<!> Propositions </!>
+<!>
+------------------------------------------------------------------------------
+This test case involves the scenario of applying for citizenship in a country.
+The analysis behind this scenario can be read from the Assignment 1 description.
+Below is an implementation of the same scenario but in Carneades Markup Language (CML)
+------------------------------------------------------------------------------
+<!>
+
+<!> ---Propositions--- <!>
 
 <Proposition>
   <name>give_citizenship</name>
@@ -16,9 +24,9 @@
   <proof>preponderance</proof>
 </Proposition>
 
-<!> Arguments </!>
+<!> ---Arguments--- <!>
 
-  <!> citizenship </!>
+  <!> ---citizenship--- <!>
 <Argument>
   <name>arg_for_citizenship_1</name>
   <conclusion>give_citizenship</conclusion>
@@ -45,7 +53,7 @@
   <weight>0.6</weight>
 </Argument>
 
-  <!> eligibility requirements </!>
+  <!> ---eligibility requirements--- <!>
 <Argument>
   <name>arg_for_meet_eligibility_requirements</name>
   <conclusion>meet_eligibility_requirements</conclusion>
@@ -57,7 +65,7 @@
   <weight>0.8</weight>
 </Argument>
 
-  <!> language test </!>
+  <!> ---language test--- <!>
 <Argument>
   <name>arg_for_pass_language_test</name>
   <conclusion>pass_language_test</conclusion>
@@ -65,7 +73,7 @@
   <weight>0.8</weight>
 </Argument>
 
-  <!> knowledge test </!>
+  <!> ---knowledge test--- <!>
 <Argument>
   <name>arg_for_pass_knowledge_test</name>
   <conclusion>pass_knowledge_test</conclusion>
@@ -73,7 +81,7 @@
   <weight>0.8</weight>
 </Argument>
 
-  <!> demonstrate moral character </!>
+  <!> ---demonstrate moral character--- <!>
 <Argument>
   <name>arg_for_not_demonstrate_moral_character</name>
   <conclusion>neg_demonstrate_moral_character</conclusion>
@@ -88,7 +96,7 @@
   <weight>0.5</weight>
 </Argument>
 
-<!> CAES </!>
+<!> ---CAES--- <!>
 
 <CAES>
   <name>caes1</name>

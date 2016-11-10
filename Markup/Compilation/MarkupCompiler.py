@@ -113,7 +113,7 @@ class MarkupCompiler(ErrorThrowable):
                 if isCaeObj == False:
                     self.__createThrowError(ErrorTypes.ERR_HASHCLASSOBJECT, cObj.name, 'unk.')
                     _Log('...compilation failed...\n', _LoggerState.ERROR)
-                    return None
+                    return None, None, None, None, None
                 else:
                     # else, create a caernades object instance
                     caesClass = self.__caesClassFactory.createCaesClass(cObj.name, cObj.attributes)
@@ -129,7 +129,7 @@ class MarkupCompiler(ErrorThrowable):
                     else:
                         self.__createThrowError(ErrorTypes.ERR_HASHCLASSOBJECT, cObj.name, 'unk.')
                         _Log('...compilation failed...\n', _LoggerState.ERROR)
-                        return None
+                        return None, None, None, None, None
 
             # process each proposition
             for i in range(0, len(caesProps)):
@@ -164,16 +164,17 @@ class MarkupCompiler(ErrorThrowable):
             for caes in caesCAES:
                 _Log(caes.toString(), _LoggerState.DEBUG)
 
+            _Log('...compilation successful...\n', _LoggerState.WARNING)
+
             # return the compiled caes classes
             return caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES
-
-            _Log('...compilation successful...\n', _LoggerState.WARNING)
 
         except:
             # throw error because markup reader failed to get data from file
             if classObjects == None or len(classObjects) == 0:
                 self.__createThrowError(ErrorTypes.ERR_NULLDATA, 'compiler', 'unk.')
 
+        return None, None, None, None, None
     def __propositionCompile(self, i, caesProps):
         """compile all propositions by checking for no name duplicates and
         negated appropriate propositions"""
@@ -324,3 +325,8 @@ class MarkupCompiler(ErrorThrowable):
             # throw error because assumption does not exist as a proposition
             if existsProp == False:
                 self.__createThrowError(ErrorTypes.ERR_BADASSUMPTIONS, str(caesCAES[0].assumptions[i]), 'unk.')
+
+    # error handling
+    def __createThrowError(self, errorType, error_item, line):
+        """inherited from ErrorThrowable"""
+        super(MarkupCompiler, self).createThrowError(errorType, error_item, line)
