@@ -58,8 +58,7 @@ And order (as well as spacing) is irrelevant:
 
   <CMLAttribute2> value_of_attribute2 </CMLAttribute2>
   
-  <CMLAttribute1>value_of_attribute1</CMLAttribute1>
-</CMLObject>
+  <CMLAttribute1>value_of_attribute1</CMLAttribute1> </CMLObject>
 ```
 The _class/attribute_ combinations (constructors) for each class are displayed below. Optional _attributes_ are indicated by a comment: 
 
