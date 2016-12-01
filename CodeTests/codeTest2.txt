@@ -1,0 +1,116 @@
+<!>
+------------------------------------------------------------------------------
+This test case involves the scenario of applying for citizenship in a country.
+The analysis behind this scenario can be read from the Assignment 1 description.
+Below is an implementation of the same scenario but in Carneades Markup Language (CML)
+------------------------------------------------------------------------------
+<!>
+
+<!> ---Propositions--- <!>
+
+<Proposition>
+  <name>give_citizenship</name>
+  <proof>preponderance</proof>
+</Proposition>
+
+<Proposition>
+  <name>demonstrate_moral_character</name>
+  <truth>True</truth>
+</Proposition>
+
+<Proposition>
+  <name>neg_demonstrate_moral_character</name>
+  <negate>demonstrate_moral_character</negate>
+  <proof>preponderance</proof>
+</Proposition>
+
+<!> ---Arguments--- <!>
+
+  <!> ---citizenship--- <!>
+<Argument>
+  <name>arg_for_citizenship_1</name>
+  <conclusion>give_citizenship</conclusion>
+  <premises>[parents_have_citizenship]</premises>
+  <weight>1.0</weight>
+</Argument>
+
+<Argument>
+  <name>arg_for_citizenship_2</name>
+  <conclusion>give_citizenship</conclusion>
+  <premises>
+    [meet_eligibility_requirements,
+    pass_language_test,
+    pass_knowledge_test,
+    take_oath_of_allegiance]
+  </premises>
+  <weight>0.5</weight>
+</Argument>
+
+<Argument>
+  <name>arg_for_citizenship_3</name>
+  <conclusion>neg_give_citizenship</conclusion>
+  <premises>[neg_demonstrate_moral_character]</premises>
+  <weight>0.6</weight>
+</Argument>
+
+  <!> ---eligibility requirements--- <!>
+<Argument>
+  <name>arg_for_meet_eligibility_requirements</name>
+  <conclusion>meet_eligibility_requirements</conclusion>
+  <premises>
+    [meet_age_minimum,
+    meet_permanent_residence_minimum,
+    meet_physically_present_minimum]
+  </premises>
+  <weight>0.8</weight>
+</Argument>
+
+  <!> ---language test--- <!>
+<Argument>
+  <name>arg_for_pass_language_test</name>
+  <conclusion>pass_language_test</conclusion>
+  <premises>[read_language, write_language, speak_language]</premises>
+  <weight>0.8</weight>
+</Argument>
+
+  <!> ---knowledge test--- <!>
+<Argument>
+  <name>arg_for_pass_knowledge_test</name>
+  <conclusion>pass_knowledge_test</conclusion>
+  <premises>[know_history, know_government]</premises>
+  <weight>0.8</weight>
+</Argument>
+
+  <!> ---demonstrate moral character--- <!>
+<Argument>
+  <name>arg_for_not_demonstrate_moral_character</name>
+  <conclusion>neg_demonstrate_moral_character</conclusion>
+  <premises>[commit_serious_crime]</premises>
+  <weight>0.3</weight>
+</Argument>
+
+<Argument>
+  <name>arg_for_demonstrate_moral_character</name>
+  <conclusion>demonstrate_moral_character</conclusion>
+  <premises>[working_minimum]</premises>
+  <weight>0.5</weight>
+</Argument>
+
+<!> ---CAES--- <!>
+
+<CAES>
+  <name>caes1</name>
+  <assumptions>
+    [meet_age_minimum,
+    meet_permanent_residence_minimum,
+    meet_physically_present_minimum,
+    read_language,
+    write_language,
+    speak_language,
+    know_history,
+    know_government,
+    take_oath_of_allegiance,
+    commit_serious_crime,
+    working_minimum]
+  </assumptions>
+</CAES>

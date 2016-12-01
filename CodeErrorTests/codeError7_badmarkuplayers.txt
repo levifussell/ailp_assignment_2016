@@ -1,0 +1,13 @@
+<!>
+------------------------------------------
+This file tests error handling of extra markup layers
+------------------------------------------
+<!>
+
+<Proposition>
+  <name>
+    <extralayer>10</extralayer>
+  </name>
+  <truth>False</truth>
+  <type>thisisawrongthing</type>
+</Proposition>

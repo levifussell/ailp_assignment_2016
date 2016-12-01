@@ -1,12 +1,26 @@
 import re
 
 class CodeFile:
-    """Format for organising a markup string into a code class"""
+    """
+    Format for loading a markup code file and organising a markup string into a code class
 
-    def __init__(self, text):
-        self.text_unclean = text
+    @param fileName: name of the file location to load the code
+    @param text_unclean: the original code text file, unprocessed
+    @param text_formatted: the markup, with returns/tabs/spaces/etc removed
+    @param linebreakIndices: location of the indices that represent new lines
+    """
+
+    def __init__(self, fileName):
+        self.fileName = fileName
+        self.text_unclean = self.__getTextFromFile()
         self.text_formatted = self.__createFormattedCodeText(self.text_unclean)
         self.linebreakIndices = self.__calculateLines(self.text_unclean)
+
+    def __getTextFromFile(self):
+        """Read a file location and extract the text"""
+        file_read = open(self.fileName, 'r')
+        fileData = file_read.read()
+        return fileData
 
     def __createFormattedCodeText(self, textUnformatted):
         """Remove extra spaces and return characters in the string"""
@@ -48,4 +62,3 @@ class CodeFile:
     def getCleanCodeText(self):
         """Return the code string without extra characters"""
         return self.text_formatted
-

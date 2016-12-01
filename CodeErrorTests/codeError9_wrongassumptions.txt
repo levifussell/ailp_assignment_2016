@@ -1,0 +1,30 @@
+<!>
+------------------------------------------
+This file tests error handling of assumption errors
+------------------------------------------
+<!>
+
+<Proposition>
+  <name></name>
+</Proposition>
+
+<Argument>
+  <name>arg1</name>
+  <conclusion>prop1</conclusion>
+  <premises>[prop2, prop3]</premises>
+  <exceptions>[exp1]</exceptions>
+  <weight>0.5</weight>
+</Argument>
+
+<Argument>
+  <name>arg2</name>
+  <conclusion>prop2</conclusion>
+  <premises>[prop3, prop4]</premises>
+  <exceptions>[exp2]</exceptions>
+  <weight>0.7</weight>
+</Argument>
+
+<CAES>
+  <name>caes1</name>
+  <assumptions>[prop1, prop2, prop7]</assumptions> <!> prop7 is not a proposition created earlier <!>
+</CAES>

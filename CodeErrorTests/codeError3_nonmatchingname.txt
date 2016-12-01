@@ -1,0 +1,10 @@
+<!>
+------------------------------------------
+This file tests error handling of names
+------------------------------------------
+<!>
+
+<Proposition>
+  <name>prop1</name>
+  <truth>False</truth>
+</Prop>

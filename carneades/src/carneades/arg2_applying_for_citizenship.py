@@ -88,19 +88,19 @@ ps = cs.ProofStandard(
 
 """CAES"""
 
-# assumptions = {parents_have_citizenship,
-# commit_serious_crime}
-assumptions = {meet_age_minimum,
-    meet_permanent_residence_minimum,
-    meet_physically_present_minimum,
-    read_language,
-    write_language,
-    speak_language,
-    know_history,
-    know_government,
-    take_oath_of_allegiance,
-    commit_serious_crime,
-    working_minimum}
+assumptions = {parents_have_citizenship,
+commit_serious_crime}
+# assumptions = {meet_age_minimum,
+#     meet_permanent_residence_minimum,
+#     meet_physically_present_minimum,
+#     read_language,
+#     write_language,
+#     speak_language,
+#     know_history,
+#     know_government,
+#     take_oath_of_allegiance,
+#     commit_serious_crime,
+#     working_minimum}
 
 weights = {'arg_for_citizenship_1':1.0,
     'arg_for_citizenship_2':0.5,
@@ -117,6 +117,8 @@ caes = cs.CAES(argset, audience, ps)
 print(caes.get_all_arguments())
 
 print(caes.acceptable(give_citizenship))
+
+print(caes.get_all_arguments_set())
 
 
 

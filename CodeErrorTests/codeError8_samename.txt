@@ -1,0 +1,16 @@
+<!>
+------------------------------------------
+This file tests error handling of same names
+------------------------------------------
+<!>
+
+
+<Proposition>
+  <name>hello</name> <!> same name <!>
+  <truth>False</truth>
+</Proposition>
+
+<Proposition>
+  <name>hello</name> <!> same name <!>
+  <truth>True</truth>
+</Proposition>

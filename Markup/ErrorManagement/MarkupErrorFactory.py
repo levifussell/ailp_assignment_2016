@@ -20,8 +20,11 @@ class ErrorTypes(Enum):
 class MarkupErrorFactory:
     """Static factory class used to create errors with preset text and formats
     based on the type of error that has been thrown"""
+
     @staticmethod
     def createError(errorType):
+        """Create an error object based on the type of error"""
+        
         err_regExp = ''
         err_text = ''
         err_level = ErrorHandlingTypes.UNKNOWN

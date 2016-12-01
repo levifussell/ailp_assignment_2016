@@ -1,0 +1,78 @@
+<!>
+------------------------------------------------------------------------------
+This test case involves the scenario of shoplifting.
+There are 2 witnesses, a shop owner and a security camera as arguments toward
+the shoplifting scenario. The weighting of shoplifting is beyond_reasonable_doubt,
+therefore if the witnesses clash in views, no decision is made, but the weight of
+the security camera and shop owner can overthrow this.
+Below is an implementation of the same scenario but in Carneades Markup Language (CML)
+------------------------------------------------------------------------------
+<!>
+
+<!> ---Propositions--- <!>
+
+<Proposition>
+  <name>shoplifting</name>
+  <proof>beyond_reasonable_doubt</proof>
+</Proposition>
+
+<!> ---Arguments--- <!>
+
+  <!> ---shoplifting--- <!>
+<Argument>
+  <name>arg_shoplifting1</name>
+  <conclusion>neg_shoplifting</conclusion>
+  <premises>[witness1]</premises>
+  <exceptions>[neg_witness1_with_shoplifter]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+<Argument>
+  <name>arg_shoplifting2</name>
+  <conclusion>shoplifting</conclusion>
+  <premises>[witness2, shop_open]</premises>
+  <exceptions>[neg_witness2_was_at_store]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+<Argument>
+  <name>arg_shoplifting3</name>
+  <conclusion>shoplifting</conclusion>
+  <premises>[security_camera]</premises>
+  <exceptions>[neg_camera_working]</exceptions>
+  <weight>1.0</weight>
+</Argument>
+<Argument>
+  <name>arg_shoplifting4</name>
+  <conclusion>neg_shoplifting</conclusion>
+  <premises>[shop_worker]</premises>
+  <exceptions>[neg_shop_open]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+
+  <!> ---witness2--- <!>
+<Argument>
+  <name>arg_witness2_1</name>
+  <conclusion>witness2_was_at_store</conclusion>
+  <premises>[store_receipt]</premises>
+  <weight>1.0</weight>
+</Argument>
+<Argument>
+  <name>arg_witness2_2</name>
+  <conclusion>witness2_was_at_store</conclusion>
+  <premises>[security_camera]</premises>
+  <weight>1.0</weight>
+</Argument>
+
+<!> ---CAES--- <!>
+
+<CAES>
+  <name>caes1</name>
+  <assumptions>
+    [neg_camera_working,
+    security_camera,
+    witness2,
+    shop_open,
+    witness2_was_at_store,
+    witness1,
+    neg_witness1_with_shoplifter]
+  </assumptions>
+</CAES>

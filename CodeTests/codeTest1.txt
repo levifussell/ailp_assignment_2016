@@ -1,14 +1,23 @@
 <!>
+------------------------------------------------------------------------------
+This test case involves the scenario of trying to get a parking ticket revoked.
+The analysis behind this scenario can be read from the Assignment 1 description.
+Below is an implementation of the same scenario but in Carneades Markup Language (CML)
+------------------------------------------------------------------------------
+<!>
+
+<!>
+Comments can be anything:
 asfjsakjr198r2j8r_%)@)(@$@$)(j2j2fjaijfk
 ajfkasfklajsfklajfkla
 ksjveioaec1
-</!>
+<!>
 
-<!> Propositions </!>
+<!> ---Propositions--- <!>
 
 <Proposition>
     <name>own_car</name>
-    <proof>dialectical_validity</proof>
+    <proof>dialectical_validity</proof> <!> here the standard of proof is defined for this proposition <!>
 </Proposition>
 
 <Proposition>
@@ -16,19 +25,19 @@ ksjveioaec1
     <proof>preponderance</proof>
 </Proposition>
 
-<!> ARGUMENTS </!>
+<!> ---ARGUMENTS--- <!>
 
-    <!> ticket </!>
+    <!> ---ticket--- <!>
 <Argument>
     <name>arg_for_revoking_ticket_1</name>
     <conclusion>ticket_revoked</conclusion>
     <premises>[parking_legal]</premises>
-    <weight>0.8</weight>
+    <weight>0.8</weight> <!> the weight of the argument <!>
 </Argument>
 <Argument>
     <name>arg_for_revoking_ticket_2</name>
     <conclusion>ticket_revoked</conclusion>
-    <premises>[neg_own_car]</premises>
+    <premises>[neg_own_car]</premises> <!> a negative proposition is automatically created from 'own_car' prop. <!>
     <weight>0.8</weight>
 </Argument>
 <Argument>
@@ -38,7 +47,7 @@ ksjveioaec1
     <weight>0.6</weight>
 </Argument>
 
-    <!> car </!>
+    <!> ---car--- <!>
 <Argument>
     <name>arg_for_owning_a_car</name>
     <conclusion>own_car</conclusion>
@@ -53,15 +62,17 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 <Argument>
+    <!> here we write the name of the argument: <!>
     <name>arg_for_not_owning_a_car_2</name>
     <conclusion>neg_own_car</conclusion>
     <premises>[car_stolen]</premises>
     <weight>0.8</weight>
 </Argument>
 
-    <!> parking </!>
+    <!> ---parking--- <!>
 <Argument>
     <name>arg_for_not_legal_parking</name>
+    <!> here 'neg_' is used without a predefined prop. therefore the compiler will make one <!>
     <conclusion>neg_parking_legal</conclusion>
     <premises>[visible_parking_signs, neg_permit_valid]</premises>
     <weight>0.8</weight>
@@ -80,7 +91,7 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 
-    <!> permit </!>
+    <!> ---permit--- <!>
 <Argument>
     <name>arg_for_permit_valid</name>
     <conclusion>permit_valid</conclusion>
@@ -88,7 +99,7 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 
-    <!> parking exceptions </!>
+    <!> ---parking exceptions--- <!>
 <Argument>
     <name>arg_for_parking_exception_1</name>
     <conclusion>parking_exception</conclusion>
@@ -102,9 +113,10 @@ ksjveioaec1
     <weight>0.8</weight>
 </Argument>
 
-<!> CAES </!>
+<!> ---CAES--- <!>
 
 <CAES>
     <name>caes1</name>
+    <!> only the assumptions are required to build the rest of the system after the arguments <!>
     <assumptions>[car_documents, photo_of_parking_signs, neg_visible_parking_signs, neg_permit_valid]</assumptions>
 </CAES>

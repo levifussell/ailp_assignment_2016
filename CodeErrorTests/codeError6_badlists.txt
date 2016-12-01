@@ -1,0 +1,13 @@
+<!>
+------------------------------------------
+This file tests error handling of lists
+------------------------------------------
+<!>
+
+<Argument>
+  <name>arg1</name>
+  <conclusion>prop1</conclusion>
+  <premises>[prop2, prop3,</premises> <!> list not correctly completed here <!>
+  <exceptions>[exp1, exp2]</exceptions>
+  <weight>0.5</weight>
+</Argument>

@@ -1,0 +1,11 @@
+<!>
+------------------------------------------
+This file tests error handling of constructors
+------------------------------------------
+<!>
+
+<Proposition>
+  <name>prop1</name>
+  <truth>False</truth>
+  <type>thisisawrongthing</type>
+</Proposition>

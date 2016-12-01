@@ -1,82 +1,50 @@
-# READING FILES INTO CAES:
-#
-# --PROPOSITIONS:
-# <Proposition>
-#   <name>NAME</name>
-#   <truth>TRUE</truth>
-# </Proposition>
-#
-# --ARGUEMENTS:
-# <Argument>
-#   <propositions>[P1, P2, P3]</propositions>
-#   <exceptions>[P1, P2, P3]</exceptions>
-#   <outcome>PROPOSITION</outcome>
-# </Arguement>
-#
-# --
-#
-#
+"""READING FILES INTO CAES:
 
-# data_input = "<Argument>\n" + "\t<name>Arg1</name>\n" + "</Argument>" + "\n<Argument>\n" + "\t<name>Arg2</name>\n" + "</Argument>"
+<!>PROPOSITIONS:<!>
+<Proposition>
+  <name>NAME</name>
+  <truth>TRUE</truth>
+</Proposition>
 
-IMPORT_CARNEADES = False
+<!>ARGUEMENTS:<!>
+<Argument>
+  <propositions>[P1, P2, P3]</propositions>
+  <exceptions>[P1, P2, P3]</exceptions>
+  <outcome>PROPOSITION</outcome>
+</Arguement>
 
-if IMPORT_CARNEADES:
-    import carneades.src.carneades.caes as cs
+--
 
+--------------------------------------
+--------------------------------------
+**see README.md for more information**
+--------------------------------------
+--------------------------------------
+
+"""
+
+from Markup._MarkupManager import _MarkupManager
 from Markup.CodeFile import CodeFile
-from Markup.Compilation.MarkupCompiler import MarkupCompiler
-from Markup.FileReading.MarkupReader import MarkupReader, ErrorTypes
-from Markup.MarkupClass.Attribute import AttributeTupleList
-
-if IMPORT_CARNEADES:
-    from Markup.CarneadesWrite.CarneadesWriter import CarneadesWriter
-
-from _LoggerManager import _Logger_Thread, _Log
-
-import re
-from copy import copy, deepcopy
+from _LoggerManager import _Logger_Thread, _LoggerState
 
 import time
-
-import curses
-from curses.textpad import Textbox, rectangle
 
 # SIMULATE A FILE READ HERE----
 # REGEX FOR GENERIC MARK UP LANGUAGE--------------------------------------
 
-def beginMarkupRead(dataString):
+def beginMarkupRead(codeFile, testProp, expectedTestResult):
 
     # start error thread
     _THREAD_log = _Logger_Thread()
     _THREAD_log.start()
 
     # create a CodeFile object
-    codeFile = CodeFile(dataString)
+    codeFile = CodeFile(codeFile)
 
-    mlreader = MarkupReader()
-    mlreader.addErrorType(ErrorTypes.ERR_MATCHINGBRACKETS)
-    mlreader.addErrorType(ErrorTypes.ERR_UNKNOWNCHARACTER)
-    mlreader.addErrorType(ErrorTypes.ERR_NONMATCHINGLIST)
+    # read, compile and process the markup file to Carneades system
+    _MarkupManager.run(codeFile, testProp, expectedTestResult)
 
-    if _Logger_Thread.count_errors == 0:
-        classObjs = mlreader.run(codeFile)
-
-    mlcompiler = MarkupCompiler()
-    caesProps = []
-    caesArgs = []
-    caesProofStnd = []
-    caesArgWeights = []
-    caesCAES = []
-    if _Logger_Thread.count_errors == 0:
-        caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES = mlcompiler.run(classObjs)
-
-    if IMPORT_CARNEADES:
-        csWriter = CarneadesWriter()
-        if _Logger_Thread.count_errors == 0:
-            csWriter.build(caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES)
-            csWriter.testBuild()
-
+    # end the process and give the threads time to close
     _Logger_Thread.programOverTime = time.time()
     _Logger_Thread.programOver = True
 
@@ -85,77 +53,39 @@ def beginMarkupRead(dataString):
 
 if __name__ == '__main__':
 
-    file_read = open('codeTest1.txt', 'r')
-    fileData = file_read.read()
+    testNum = input('1, 2, 3 or e to run test 1, 2 or 3, or error testing: ')
 
-    print('parsing code file: ')
-    print(fileData + '\n\n')
-    print('PARSED:')
-    # readInputFileString(fileData)
-    # fileData = re.sub('[\\n]|[\\s]', '', fileData)
-    # # fileData = re.sub('\\s', '', fileData)
-    # print(fileData)
+    # begin process
+    if testNum == '1':
+        beginMarkupRead('CodeTests/codeTest1.txt', 'ticket_revoked', True)
+    elif testNum == '2':
+        beginMarkupRead('CodeTests/codeTest2.txt', 'give_citizenship', False)
+    elif testNum == '3':
+        beginMarkupRead('CodeTests/codeTest3.txt', 'shoplifting', True)
+    elif testNum == 'e':
+        errorNum = input('1, 2, 3, 4, 5, 6, 7, 8, 9 to run error tests: ')
+        # we only care about the state in error mode, so preset it
+        _Logger_Thread.currentLogState = _LoggerState.ERROR
 
-    # TODO: UNCOMMENT TO RUN COMPILER ON TEXT
-    beginMarkupRead(fileData)
-
-    # -----------------------------------------
-    # stdscr = curses.initscr()
-    # stdscr.keypad(True)
-    # curses.cbreak()
-    # curses.noecho()
-
-    # stdscr.addstr(0, 0, "Enter IM message: (hit Ctrl-G to send)")
-
-    # editwin = curses.newwin(5,30, 2,1)
-    # rectangle(stdscr, 1,0, 1+20+1, 1+30+1)
-    # stdscr.refresh()
-
-    # box = Textbox(editwin)
-
-    # # Let the user edit until Ctrl-G is struck.
-    # box.edit()
-
-    # # Get resulting contents
-    # message = box.gather()
-
-    # curses.nocbreak()
-    # stdscr.keypad(False)
-    # curses.echo()
-    # curses.endwin()
-    # -----------------------------------------
-
-    # while True:
-    #     curses.echo()
-    #     c = stdscr.getch()
-    #     if c == curses.KEY_BACKSPACE:
-    #         stdscr.addch(' ')
-    #         [y, x] = curses.getsyx()
-    #         if x > 0:
-    #             stdscr.move(y, x)
-    #         elif y > 0:
-    #             stdscr.move(y - 1, x)
-
-    #         stdscr.refresh()
-
-    #     if c == curses.KEY_ENTER or c == 10 or c == 13:
-    #         [y, x] = curses.getsyx()
-    #         stdscr.move(y + 1, 0)
-    #     elif c == ord('q'):
-    #         curses.nocbreak()
-    #         stdscr.keypad(False)
-    #         curses.echo()
-    #         curses.endwin()
-    #         break
-
-    # attr1 = AttributeFactory.createAttribute('hello', 'false')
-    # print(attr1.toString())
-
-    # readInputFileString(data_input)
-
-    # objc = ClassObject("class")
-    # attr1 = AttributeNumber('attr1', 20)
-    # attr2 = AttributeTruthValue('attr1', True)
-    # objc.addAttribute(attr1)
-    # objc.addAttribute(attr2)
-    # objc.print()
+        if errorNum == '1':
+            beginMarkupRead('CodeErrorTests/codeError1_brackets.txt', '', True)
+        elif errorNum == '2':
+            beginMarkupRead('CodeErrorTests/codeError2_brackets.txt', '', True)
+        elif errorNum == '3':
+            beginMarkupRead('CodeErrorTests/codeError3_nonmatchingname.txt', '', True)
+        elif errorNum == '4':
+            beginMarkupRead('CodeErrorTests/codeError4_badcomments.txt', '', True)
+        elif errorNum == '5':
+            beginMarkupRead('CodeErrorTests/codeError5_badconstructor.txt', '', True)
+        elif errorNum == '6':
+            beginMarkupRead('CodeErrorTests/codeError6_badlists.txt', '', True)
+        elif errorNum == '7':
+            beginMarkupRead('CodeErrorTests/codeError7_badmarkuplayers.txt', '', True)
+        elif errorNum == '8':
+            beginMarkupRead('CodeErrorTests/codeError8_samename.txt', '', True)
+        elif errorNum == '9':
+            beginMarkupRead('CodeErrorTests/codeError9_wrongassumptions.txt', 'prop1', True)
+        else:
+            print('not a valid input')
+    else:
+        print('not a valid input')

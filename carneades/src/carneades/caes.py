@@ -168,6 +168,7 @@ from igraph import Graph, plot
 # fix to ensure that package is loaded properly on system path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
+# changed to '.tracecalls' from 'tracecalls' due to importing from external directory
 from .tracecalls import TraceCalls
 
 
