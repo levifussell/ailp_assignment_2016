@@ -58,3 +58,4 @@ class _MarkupManager:
                 csWriter.build(caesProps, caesArgs, caesProofStnd, caesArgWeights, caesCAES)
                 # run test on the Carneades system
                 csWriter.testBuild(testProp, expectedTestResult)
+                return csWriter.propositions.values(), csWriter.argumentSet, csWriter.audiences[0], csWriter.proofOfStandards[0], csWriter.propositions[testProp]

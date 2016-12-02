@@ -25,6 +25,7 @@
 
 from Markup._MarkupManager import _MarkupManager
 from Markup.CodeFile import CodeFile
+from BurdenOfProof._BurdenOfProofManager import _BurdenOfProofManager
 from _LoggerManager import _Logger_Thread, _LoggerState
 
 import time
@@ -42,7 +43,13 @@ def beginMarkupRead(codeFile, testProp, expectedTestResult):
     codeFile = CodeFile(codeFile)
 
     # read, compile and process the markup file to Carneades system
-    _MarkupManager.run(codeFile, testProp, expectedTestResult)
+    allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp = _MarkupManager.run(codeFile, testProp, expectedTestResult)
+
+    burdenProofSim = _BurdenOfProofManager(allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp)
+
+    # do 5 steps for now
+    for i in range(0, 20):
+        burdenProofSim.step()
 
     # end the process and give the threads time to close
     _Logger_Thread.programOverTime = time.time()

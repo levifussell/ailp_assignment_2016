@@ -119,4 +119,5 @@ ksjveioaec1
     <name>caes1</name>
     <!> only the assumptions are required to build the rest of the system after the arguments <!>
     <assumptions>[car_documents, photo_of_parking_signs, neg_visible_parking_signs, neg_permit_valid]</assumptions>
+    <!><assumptions>[car_documents, is_emergency, neg_permit_valid]</assumptions><!>
 </CAES>

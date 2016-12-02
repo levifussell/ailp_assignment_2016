@@ -172,7 +172,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from .tracecalls import TraceCalls
 
 
-LOGLEVEL = logging.DEBUG
+# LOGLEVEL = logging.DEBUG
 # Uncomment the following line to raise the logging level and thereby turn off
 # debug messages
 LOGLEVEL = logging.INFO
@@ -624,7 +624,7 @@ class CAES(object):
         for arg in self.argset.arguments:
             print(arg)
 
-    @TraceCalls()
+    # @TraceCalls()
     def applicable(self, argument):
         """
         An argument is *applicable* in a CAES if it needs to be taken into
@@ -668,7 +668,7 @@ class CAES(object):
         return b1 and b2
 
 
-    @TraceCalls()
+    # @TraceCalls()
     def acceptable(self, proposition):
         """
         A conclusion is *acceptable* in a CAES if it can be arrived at under
@@ -688,7 +688,7 @@ class CAES(object):
                       format(proposition, standard))
         return self.meets_proof_standard(proposition, standard)
 
-    @TraceCalls()
+    # @TraceCalls()
     def meets_proof_standard(self, proposition, standard):
         """
         Determine whether a proposition meets a given proof standard.
