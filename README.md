@@ -7,7 +7,7 @@ This assignment asks to implement a system for running a Carneades argumentation
 
 **running the test files**
 
-The test files that can be run are `codeTest1.txt`, `codeTest2.txt` and `codeTest3.txt` located in the directory `CodeTests/`. To run these files, run the file `main.py` in the cmd with python3.4 and type either `1`, `2` or `3`. The logger output mode can be set from the `\_Logger\_Thread` class in the `\_LoggerManager.py` file. Currently the Log behaviour is set to _WARNING_, but setting this to _DEBUG_ will give more intuitive output. Setting the Log to only _ERROR_ will make sure it only displays errors and the output Carneades, which is useful for analysing the results. (Note: the Log state must be on _WARNING_ or above to view the expected vs. actual output results of the argument.)
+The test files that can be run are `codeTest1.txt`, `codeTest2.txt` and `codeTest3.txt` located in the directory `CodeTests/`. To run these files, run the file `main.py` in the cmd with python3.4 and type either `1`, `2` or `3` or `e (for error tests)`. The logger output mode can be set from the `\_Logger\_Thread` class in the `\_LoggerManager.py` file. Currently the Log behaviour is set to _WARNING_, but setting this to _DEBUG_ will give more intuitive output. Setting the Log to only _ERROR_ will make sure it only displays errors and the output Carneades, which is useful for analysing the results. (Note: the Log state must be on _WARNING_ or above to view the expected vs. actual output results of the argument.)
 
 **Carneades Markup Language (CML)**
 
