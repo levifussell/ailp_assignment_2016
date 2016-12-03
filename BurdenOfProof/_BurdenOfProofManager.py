@@ -17,11 +17,18 @@ class _BurdenOfProofManager:
         self.allArgumentsSet = allArgumentsSet
         self.allAudience = allAudience
         self.allProofOfStandards = allProofOfStandards
+        # self.attemptedArguments = []
 
         self.argumentTargetProp = argumentProp
         self.currentWeakProps = [argumentProp]
         self.currentArgSet = []
         self.temporaryAssumptions = []
+
+        self.searchGraph = {}
+        self.searchGraph[argumentProp] = []
+        self.latestProp = None
+
+        self.temporaryAudience = self.allAudience
 
         self.state = _BurdenState.TICKET
 
@@ -48,25 +55,57 @@ class _BurdenOfProofManager:
 
 
         self.temporaryAssumptions = []
+        # self.currentWeakProps = [self.argumentTargetProp]
 
         for prop in argsetStep.propset():
             # check if acceptable
             try:
-                # if not(caesStep.acceptable(prop)):
-                if prop != None and not(prop in self.currentWeakProps) and not(prop in self.allAudience.assumptions):
-                    self.currentWeakProps.append(prop)
-                    # print('arg numm1111:{}, {}'.format(prop, argsetStep.get_arguments(prop)))
-                    negateAllowed = True
-                    try:
-                        if len(argsetStep.get_arguments(prop.negate())) == 0:
-                            negateAllowed = False
-                        else:
-                            negateAllowed = True
-                    except:
-                        negateAllowed = True
+                hasNoArgumentsFor = False
+                try:
+                    if len(argsetStep.get_arguments(prop)) == 0 and len(argsetStep.get_arguments(prop.negate())) == 0:
+                        hasNoArgumentsFor = True
+                except:
+                    hasNoArgumentsFor = True
 
-                    if len(argsetStep.get_arguments(prop)) == 0 and negateAllowed:
+                # if not(caesStep.acceptable(prop)):
+                if prop != None and not(prop in self.currentWeakProps) and hasNoArgumentsFor:
+                    self.currentWeakProps.append(prop)
+
+                    # check which argument this prop was a part of and link it to that argument's conclusion
+                    for arg in self.currentArgSet:
+                        if prop in arg.premises:
+                            if not(prop in self.searchGraph.keys()):
+                                self.searchGraph[prop] = []
+
+                            self.searchGraph[prop].append(arg.conclusion)
+                            # remember the latest prop, so that when we are successful we can trace up the graph
+                            # TODO: later replace this with a list of all successful props and choose the prop that
+                            #  is the shortest distance to the argumentTargetProp
+                            self.latestProp = prop
+
+                    # print('arg numm1111:{}, {}'.format(prop, argsetStep.get_arguments(prop)))
+                    # negateAllowed = True
+                    # try:
+                    #     if len(argsetStep.get_arguments(prop.negate())) == 0:
+                    #         negateAllowed = False
+                    #     else:
+                    #         negateAllowed = True
+                    # except:
+                    #     negateAllowed = True
+
+
+                    # if the proposition contains no arguments for the negative or positive case (or both
+                    #  cases don't exist),
+                    #  then add it as an assumption to the audience temporarily. If either the positive
+                    #  or negative have arguments for them, then no assumptions are added
+                if prop != None and not(prop in self.temporaryAudience.assumptions):
+                    try:
+                        if len(argsetStep.get_arguments(prop)) == 0 and len(argsetStep.get_arguments(prop.negate())) == 0:
+                            self.temporaryAssumptions.append(prop.negate())
+                            # self.currentWeakProps.remove(prop)
+                    except:
                         self.temporaryAssumptions.append(prop.negate())
+                        # self.currentWeakProps.remove(prop)
                     # _Log('weak prop found: {}'.format(prop), _LoggerState.WARNING)
             except:pass
 
@@ -76,22 +115,32 @@ class _BurdenOfProofManager:
         assumpStep = []
         assumpStep.extend(self.allAudience.assumptions)
         assumpStep.extend(self.temporaryAssumptions)
-        audStep = cs.Audience(assumpStep, self.allAudience.weight)
+        self.temporaryAudience = cs.Audience(assumpStep, self.allAudience.weight)
 
-        print('asasasasa:{}'.format(audStep.assumptions))
+        print('asasasasa:{}'.format(self.temporaryAudience.assumptions))
 
-        caesStep = cs.CAES(argsetStep, audStep, self.allProofOfStandards)
+        caesStep = cs.CAES(argsetStep, self.temporaryAudience, self.allProofOfStandards)
 
         # check if the target prop is now acceptable
         # try:
-        if caesStep.acceptable(self.argumentTargetProp):
-            if self.state == _BurdenState.TICKET:
-                self.state = _BurdenState.NO_TICKET
-                self.currentWeakProps = [self.argumentTargetProp]
+        if caesStep.acceptable(self.argumentTargetProp) and self.state == _BurdenState.TICKET:
+            # if self.state == _BurdenState.TICKET:
+            self.state = _BurdenState.NO_TICKET
+            self.currentWeakProps = [self.argumentTargetProp]
+
+            # trace the argument found back to the target argument prop and write it out
+            finalArg = self.traceShortestArgument()
+
+            _Log('FINAL ARG: {}'.format(finalArg), _LoggerState.WARNING)
 
         elif not caesStep.acceptable(self.argumentTargetProp) and self.state == _BurdenState.NO_TICKET:
             self.state = _BurdenState.TICKET
             self.currentWeakProps = [self.argumentTargetProp]
+
+            # trace the argument found back to the target argument prop and write it out
+            finalArg = self.traceShortestArgument()
+            _Log('FINAL ARG: {}'.format(finalArg), _LoggerState.WARNING)
+
         # except:
         #     try:
         #         # if fails, the argument isn't acceptable
@@ -134,6 +183,16 @@ class _BurdenOfProofManager:
 
         _Log('\n\nend state: {}'.format(self.state), _LoggerState.WARNING)
 
+
+        # draw out graph
+        searchGraphStr = ""
+        for node in self.searchGraph.keys():
+            searchGraphStr += "\n{} -> ".format(node)
+            for link in self.searchGraph[node]:
+                searchGraphStr += "{}, ".format(link)
+
+        _Log(searchGraphStr, _LoggerState.WARNING)
+
     def getNextArgument(self):
 
         # find argument that targets the weaknesses (ordered in order of best to worst)
@@ -155,7 +214,7 @@ class _BurdenOfProofManager:
                 propArgs = self.allArgumentsSet.get_arguments(attackProp)
                 # weakPropArgs.extend(propArgs)
                 for j in range(0, len(propArgs)):
-                    # if not(propArgs[j] in self.currentArgSet):
+                    if not(propArgs[j] in self.currentArgSet):
                         weakPropArgs.append(propArgs[j])
                         weakPropArgStrengths.append(i)
             except: pass
@@ -164,13 +223,26 @@ class _BurdenOfProofManager:
         # argsData = ""
         # for i in range(0, len(weakPropArgs)):
         #     argsData += "{}. Arg: {},        strength={}\n".format(i, weakPropArgs[i], weakPropArgStrengths[i])
-
+        #
         # _Log(argsData, _LoggerState.WARNING)
 
-        # for now, return the highest strength argument
+        # for now, return the last argument in the list (depth first search)
         try:
             return weakPropArgs[-1]
         except:
             return None
 
     def determineCurrentArgumentWeaknesses(self): pass
+
+    def traceShortestArgument(self):
+
+        # find the shortest argument from the successful props. For now there is only one successful prop
+        shortestArgumentProps = [self.latestProp]
+
+        currentProp = self.latestProp
+        while currentProp != self.argumentTargetProp:
+            # for now, get the first value the node points to
+            currentProp = self.searchGraph[currentProp][0]
+            shortestArgumentProps.append(currentProp)
+
+        return shortestArgumentProps
