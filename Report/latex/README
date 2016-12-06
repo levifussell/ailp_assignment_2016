@@ -1,0 +1,27 @@
+For assignments, you are requested to submit a pdf document.
+
+The key fines are:
+
+ailp_latex_template.tex : source file
+ailp_latex_template.pdf : formatted version
+carneades.png :           included image.
+ailp_latex_biblio.bib:    bibliography items.
+
+This indicates how to include images.
+You may want some references -- examples are given, as are
+some ways of presenting data.
+
+To format:
+if you use bibtex for references, need 4 commands:
+
+% pdflatex ailp_latex_template
+% bibtex ailp_latex_template
+% pdflatex ailp_latex_template
+% pdflatex ailp_latex_template
+
+Otherwise, simply:
+
+% pdflatex ailp_latex_template
+
+AS.
+
