@@ -1,0 +1,14 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Aims and hypothesis}{}% 2
+\BOOKMARK [1][-]{section.3}{What is an argumentation system?}{}% 3
+\BOOKMARK [1][-]{section.4}{What is Carneades?}{}% 4
+\BOOKMARK [1][-]{section.5}{Algorithms and implementation}{}% 5
+\BOOKMARK [2][-]{subsection.5.1}{extending the system to read from text files}{section.5}% 6
+\BOOKMARK [2][-]{subsection.5.2}{extending the system to argue}{section.5}% 7
+\BOOKMARK [1][-]{section.6}{Experiments and results}{}% 8
+\BOOKMARK [2][-]{subsection.6.1}{Testing of the text reading extension}{section.6}% 9
+\BOOKMARK [2][-]{subsection.6.2}{Testing the argumentation extension}{section.6}% 10
+\BOOKMARK [1][-]{section.7}{Discussion and Conclusion}{}% 11
+\BOOKMARK [2][-]{subsection.7.1}{Formatting: tables}{section.7}% 12
+\BOOKMARK [2][-]{subsection.7.2}{Maths, if needed}{section.7}% 13
+\BOOKMARK [2][-]{subsection.7.3}{References}{section.7}% 14

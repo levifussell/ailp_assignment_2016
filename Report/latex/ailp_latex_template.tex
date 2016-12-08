@@ -10,6 +10,7 @@
 
 \usepackage{listings}
 \usepackage{color}
+\usepackage{hyperref}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -65,63 +66,73 @@ The intention of the extension implemented is:
 
 \section{What is an argumentation system?}
 
-Arguing has a varied audience and an immeasurable history, as anyone who has
-been a child whinging and shouting at their parents would know. We argue daily
-with others concerning prices and opinions and we argue internally with our
-emotions and internal conflicts. The concept of argumentation merely attempts to
+As all who have
+once been a child whinging and shouting at their parents would know, arguing has
+a varied audience and an immeasurable history. We argue daily
+with others concerning clothing prices and opinions and we argue internally with our
+emotions and whether we should ask that girl out. The concept of argumentation merely attempts to
 formalise and make sensible this constantly bickering world we live in.
 
 An argument is composed of three major pieces: its premises, its conclusion,
 and an inference from the premises to conclusion (site arg paper here). Each of
-these pieces is represented by proposition, an atomic statement that is either
+these pieces is represented by propositions, an atomic statement that is either
 true or false. A system of arguments composes related arguments into an
 organised manner. Generally, we represent this as a argument tree:
 
 (INSERT ARGUMENT TREE)
 
 Arguments form chains where the conclusion of one argument is the premise for
-another argument, and vice versa. Arguing is akin to the  90s Tron atari game,
-where each party rides a light bike that creates a longer and longer tail - the
-challenge is to keep your bike alive by moving and avoiding your oponent's tail, while
-trying to kill your opponent via driving them into your tail.
+another argument, and vice versa. Arguing is akin to the 80s Tron Sinclair game:
+each party rides a bike that generates a longer and longer tail - the
+challenge is to keep your bike (argument) alive by craftily averting your
+oponent's tail, yet
+simultaneously aiming to fataly catch your opponent off guard with your tail.
 
-(INSERT ARCADE GAME IMAGE HERE)
+\begin{figure}[h]
+  \includegraphics[width=6cm]
+  {images/lightCycle.png}
+  \centering
+  \caption{Old videogames still have their use when it comes to analogies.
+	  \href{http://www.arcade-history.com/images/game/2979_1.png }{source}}
+\end{figure}
 
-The light tail of our bike in an argument is driven by sequentially declaring
+The light tail of our bike in an argumentation context is driven by sequentially declaring
 more arguments in favour of your position. The opposing party drives their tail
 through invoking new arguments, or disproving your previous arguments. If
 a party has no more arguments to support their case, game over - they have
-smashed into the opponent's light tail.
+smashed into their opponent's light tail.
 
 In an argumentation system, we are hoping to automate the oscillating behaviour
 of arguing. The system has many complex decisions and weighing of options it has
 to perform, such as whether to raise a critical question to undermine an
-opponent's earlier argument, or affirm the current party by bringing to light an
-argument with firm assumptions/evidence.
+opponent's earlier argument, or affirm their current position by bringing to light an
+argument with grounded assumptions/evidence.
 
 \section{What is Carneades?}
 
-Inventing the AI that would solve all arguments us humans have would probably be
-a godsend. Sadly, we are currently far from this, but a particular area has seen
-much advancement concerning AI argumentation systems: law. Carneades is an
+Inventing the AI that would solve all arguments in all domains would be a feat.
+Sadly, this is fanciful talk, but a particular area has seen
+much advancement concerning AI and argumentation: law. Carneades is an
 argumentation framework designed for dialogue arguments between two parties and
 is designed specifically with the use of law cases in mind. Unlike the
-traditional definition, Carneades represents an argument with different types of
-premises, of which represent critical questions about the argument. These types
+traditional definition of an argument, Carneades represents an argument with different types of
+premises that pose critical questions about the argument. The three types
 are exceptions, wherein if any exception is proven true, the argument cannot
 stand, assumptions, which are assumed true by the audience (as in evidence), and
-oremises, which all must be true or assumed, in order for the argument to hold
+premises, which all must be true or assumed, in order for the argument to hold
 (site second paper on AILP web).
 
-Carneades implements burden of proof model. The burden of proof lies on
-whichever party, based on all current arguments and assumptions, has to present the
-next argument to avoid losing. Arguments are presented by the party with the
-burden of proof, until the proposition that both parties are arguing has been
-accepted/rejected in favour of the party. Propositions are accepted in
-a recursive manner depending on the defensibility of the pro and con arguments.
+Carneades implements a burden of proof model. The burden of proof is on
+whichever party, based on all current arguments and assumptions thus far, has to present the
+next argument to avoid losing. Arguments are continuously presented by the party with the
+burden of proof until the proposition that both parties are arguing has been
+accepted or rejected in favour of one party. Propositions are accepted in
+a recursive manner depending on the defensibility of the pro and con arguments
+for that proposition.
 An argument is defensible if its premises hold and its exceptions do not hold.
-To determine the premises we must begin again (site paper 2). And so the
-arugment proof descends down the tree.
+To determine the truth of the argument's premises we must begin the cycle again at choosing
+arguments (site paper 2). Hence, the
+argument proof descends down the argumentation tree.
 
 \section{Algorithms and implementation}
 
@@ -347,17 +358,49 @@ The Burden of Proof then changes hands. We can see this process in the argument
 simulation to the right:
 
 \begin{figure}[h!]
-	\includegraphics[width=8cm]
-  {images/ArgumentSearchSim2-2.png}
+	\includegraphics[width=8cm]{images/ArgumentSearchSim2-2.png}
 	\centering
 	\caption{simulation of depth-first searching the argument graph}
 \end{figure}
 
 \section{Experiments and results}
 
-\subsection{Choice of experiments}
+\subsection{Testing of the text reading extension}
 
-\subsection{Experimental results}
+There were three test cases implement the extent of the systems ability to
+understand a variety of argumentation inputs: 
+
+\begin{enumerate}
+	\item \textit{TestCase1}:
+	\item \textit{TestCase2:}
+	\item \textit{TestCase3:}
+\end{enumerate}
+
+
+\subsection{Testing the argumentation extension}
+
+\begin{table} [t,h]
+	\caption{\label{table2} Experimenting with different graph searching
+	algorithms.}
+	\vspace{2mm}
+	\centerline{
+		\begin{tabular}{|c|c|c|}
+			\hline
+			algorithm & itteration & num nodes searched \\
+			\hline  \hline
+			depth-first search & 0 & 0 \\
+			depth-first search & 0 & 0 \\
+			depth-first search & 0 & 0 \\
+			weight-first search & 0 & 0 \\
+			weight-first search & 0 & 0 \\
+			weight-first search & 0 & 0 \\
+			djikstra search & 0 & 0 \\
+			djikstra search & 0 & 0 \\
+			djikstra search & 0 & 0 \\
+			\hline
+		\end{tabular}
+	}
+\end{table}
 
 \section{Discussion and Conclusion}
 
