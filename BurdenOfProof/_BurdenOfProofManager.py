@@ -46,7 +46,7 @@ class _BurdenOfProofManager:
     def step(self):
 
         # wait for input to continue step
-        continueSim = input('------------------(continue?)------------------')
+        input('------------------(continue?)------------------')
 
         _Log('\n\nstart state: {}'.format(self.state), _LoggerState.WARNING)
 
@@ -249,7 +249,8 @@ class _BurdenOfProofManager:
         # find argument that targets the weaknesses (ordered in order of best to worst)
         weakPropArgs = []
         # an argument that targets a higher prop is more significant
-        weakPropArgStrengths = []
+        weakPropArgWeights = []
+        weakPropArgWeightsCum = []
         # for arg in self.allArguments:
         #     depthOfProp = 0
         #     for i in range(0, len(self.currentWeakProps)):
@@ -267,7 +268,9 @@ class _BurdenOfProofManager:
                 for j in range(0, len(propArgs)):
                     if not(propArgs[j] in self.currentArgSet):
                         weakPropArgs.append(propArgs[j])
-                        weakPropArgStrengths.append(i)
+                        argWeight = propArgs[i].premises + propArgs[i].exceptions
+                        weakPropArgWeights.append(argWeight)
+                        weakPropArgWeightsCum.append(self.calculateCulmWeight(propArgs[j], argWeight))
             except: pass
 
         # now we have the possible arguments for the weak props, list them
@@ -284,6 +287,38 @@ class _BurdenOfProofManager:
             return None
 
     def determineCurrentArgumentWeaknesses(self): pass
+
+    def calculateCulmWeight(self, propStart, startWeight):
+
+        currentPropNode = WeightedPropEdge(propStart, 0)
+        cumWeight = startWeight
+
+        if currentPropNode.prop == self.argumentTargetProp or currentPropNode.prop == self.argumentTargetProp.negate():
+            return cumWeight
+        else:
+            # for now, get the first value the node points to
+            firstProp = self.searchGraph[currentPropNode.prop][0]
+            self.calculateCulmWeight(firstProp.prop, cumWeight + firstProp.weight)
+
+    def graphHeuristic_depthFirstSearch(self, argumentList):
+        return argumentList[-1]
+
+    def graphHeuristic_breadthFirstSearch(self, argumentList):
+        return argumentList[0]
+
+    def graphHeuristic_weightFirstSearch(self, argumentList, argumentWeightList):
+        minProp = argumentList[0]
+        minPropWeight = 1000
+
+        for i in range(0, len(argumentList)):
+            if argumentWeightList[i] < minPropWeight:
+                minPropWeight = argumentWeightList[i]
+                minProp = argumentList[i]
+
+        return minProp
+
+    def graphHeuristic_djikstra(self, argumentList, argumentWeightCumList):
+        return self.graphHeuristic_weightFirstSearch(argumentList, argumentWeightCumList)
 
     def traceShortestArgument(self):
 
