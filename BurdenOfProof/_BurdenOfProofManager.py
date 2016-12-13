@@ -268,9 +268,18 @@ class _BurdenOfProofManager:
                 for j in range(0, len(propArgs)):
                     if not(propArgs[j] in self.currentArgSet):
                         weakPropArgs.append(propArgs[j])
-                        argWeight = propArgs[i].premises + propArgs[i].exceptions
+                        argWeight = len(propArgs[j].premises) + len(propArgs[j].exceptions)
                         weakPropArgWeights.append(argWeight)
-                        weakPropArgWeightsCum.append(self.calculateCulmWeight(propArgs[j], argWeight))
+                        if attackProp in self.searchGraph:
+                            culmWeight = self.calculateCulmWeight(attackProp, argWeight)
+                            weakPropArgWeightsCum.append(culmWeight)
+                        elif attackProp.negate() in self.searchGraph:
+                            culmWeight = self.calculateCulmWeight(attackProp.negate(), argWeight)
+                            weakPropArgWeightsCum.append(culmWeight)
+                        else:
+                            weakPropArgWeightsCum.append(0)
+                        print("attack PRORPRPOR: {} has val: {}".format(attackProp, culmWeight))
+                        # weakPropArgWeightsCum.append(culmWeight)
             except: pass
 
         # now we have the possible arguments for the weak props, list them
@@ -282,6 +291,7 @@ class _BurdenOfProofManager:
 
         # for now, return the last argument in the list (depth first search)
         try:
+            # return weakPropArgs[weakPropArgWeightsCum.index(min(weakPropArgWeightsCum))]
             return weakPropArgs[-1]
         except:
             return None
@@ -298,7 +308,8 @@ class _BurdenOfProofManager:
         else:
             # for now, get the first value the node points to
             firstProp = self.searchGraph[currentPropNode.prop][0]
-            self.calculateCulmWeight(firstProp.prop, cumWeight + firstProp.weight)
+            print('first PROP: {}'.format(firstProp))
+            return self.calculateCulmWeight(firstProp.prop, cumWeight + firstProp.weight)
 
     def graphHeuristic_depthFirstSearch(self, argumentList):
         return argumentList[-1]
