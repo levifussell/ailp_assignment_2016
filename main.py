@@ -25,7 +25,7 @@
 
 from Markup._MarkupManager import _MarkupManager
 from Markup.CodeFile import CodeFile
-from BurdenOfProof._BurdenOfProofManager import _BurdenOfProofManager
+from BurdenOfProof._BurdenOfProofManager import _BurdenOfProofManager, _ArgumentSearchHeuristic
 from _LoggerManager import _Logger_Thread, _LoggerState
 
 import time
@@ -33,7 +33,7 @@ import time
 # SIMULATE A FILE READ HERE----
 # REGEX FOR GENERIC MARK UP LANGUAGE--------------------------------------
 
-def beginMarkupRead(codeFile, testProp, expectedTestResult):
+def beginMarkupRead(codeFile, testProp, expectedTestResult, searchHeuristic = _ArgumentSearchHeuristic.BREADTH_FIRST):
 
     # start error thread
     _THREAD_log = _Logger_Thread()
@@ -45,7 +45,7 @@ def beginMarkupRead(codeFile, testProp, expectedTestResult):
     # read, compile and process the markup file to Carneades system
     allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp = _MarkupManager.run(codeFile, testProp, expectedTestResult)
 
-    burdenProofSim = _BurdenOfProofManager(allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp)
+    burdenProofSim = _BurdenOfProofManager(allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp, searchHeuristic)
 
     # do 5 steps for now
     for i in range(0, 20):
@@ -60,7 +60,7 @@ def beginMarkupRead(codeFile, testProp, expectedTestResult):
 
 if __name__ == '__main__':
 
-    testNum = input('1, 2, 3 or e to run test 1, 2 or 3, or error testing: ')
+    testNum = input('1, 2, 3, 4 or e to run test 1, 2, 3, or 4, or error testing: ')
 
     # begin process
     if testNum == '1':
@@ -69,6 +69,19 @@ if __name__ == '__main__':
         beginMarkupRead('CodeTests/codeTest2.txt', 'give_citizenship', False)
     elif testNum == '3':
         beginMarkupRead('CodeTests/codeTest3.txt', 'shoplifting', True)
+    elif testNum == '4':
+        heuristic = input('choose argument search heuristic:\n d = depth-first\n b = breadth-first\n m = min-weight-first\n k = djikstra\n')
+        argSearchHeuristic = _ArgumentSearchHeuristic.DEPTH_FIRST
+        if heuristic == 'd':
+            argSearchHeuristic = _ArgumentSearchHeuristic.DEPTH_FIRST
+        if heuristic == 'b':
+            argSearchHeuristic = _ArgumentSearchHeuristic.BREADTH_FIRST
+        if heuristic == 'm':
+            argSearchHeuristic = _ArgumentSearchHeuristic.MIN_WEIGHT_FIRST
+        if heuristic == 'k':
+            argSearchHeuristic = _ArgumentSearchHeuristic.DJIKSTRA
+
+        beginMarkupRead('CodeTests/codeTest4.txt', 'T', True, argSearchHeuristic)
     elif testNum == 'e':
         errorNum = input('1, 2, 3, 4, 5, 6, 7, 8, 9 to run error tests: ')
         # we only care about the state in error mode, so preset it

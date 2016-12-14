@@ -1,0 +1,93 @@
+<!>
+------------------------------------------------------------------------------
+This test case is for testing for ideal paths through an argumentation graph
+------------------------------------------------------------------------------
+<!>
+
+<!> ---Propositions--- <!>
+
+<!> ---Arguments--- <!>
+
+<!> CHAIN 2 <!>
+
+<Argument>
+  <name>A2</name>
+  <conclusion>T</conclusion>
+  <premises>[P3]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+<Argument>
+  <name>A3</name>
+  <conclusion>P3</conclusion>
+  <premises>[P4, P5]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+
+<!> CHAIN 3 <!>
+
+<Argument>
+  <name>A6</name>
+  <conclusion>T</conclusion>
+  <premises>[P10]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+<Argument>
+  <name>A7</name>
+  <conclusion>P10</conclusion>
+  <premises>[P11]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+<Argument>
+  <name>A8</name>
+  <conclusion>P11</conclusion>
+  <premises>[P12]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+<Argument>
+  <name>A9</name>
+  <conclusion>P12</conclusion>
+  <premises>[P13]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+
+<!> CHAIN 1 <!>
+
+<Argument>
+  <name>A1</name>
+  <conclusion>T</conclusion>
+  <premises>[P1, P2]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+
+<!> CHAIN 4 <!>
+
+<Argument>
+  <name>A4</name>
+  <conclusion>T</conclusion>
+  <premises>[P6, P7, P8]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+<Argument>
+  <name>A5</name>
+  <conclusion>P7</conclusion>
+  <premises>[P9]</premises>
+  <exceptions>[]</exceptions>
+  <weight>0.6</weight>
+</Argument>
+
+<!> ---CAES--- <!>
+
+<CAES>
+  <name>caes1</name>
+  <assumptions>
+    [P4, P5, P13]
+  </assumptions>
+</CAES>

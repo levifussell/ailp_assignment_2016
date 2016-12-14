@@ -3,11 +3,26 @@ from _LoggerManager import _Log, _LoggerState
 import carneades.src.carneades.caes as cs
 
 from enum import Enum
+import time
 
 class _BurdenState(Enum):
     TICKET = 1
     NO_TICKET = 2
     BROKE = 3
+
+    def __str__(self):
+        if self.value == 1:
+            return "TICKET"
+        elif self.value == 2:
+            return "NO TICKET"
+        else:
+            return "BROKE"
+
+class _ArgumentSearchHeuristic(Enum):
+    DEPTH_FIRST = 1
+    BREADTH_FIRST = 2
+    MIN_WEIGHT_FIRST = 3
+    DJIKSTRA = 4
 
 class WeightedPropEdge:
 
@@ -20,7 +35,7 @@ class WeightedPropEdge:
 
 class _BurdenOfProofManager:
 
-    def __init__(self, allPropositions, allArgumentsSet, allAudience, allProofOfStandards, argumentProp):
+    def __init__(self, allPropositions, allArgumentsSet, allAudience, allProofOfStandards, argumentProp, argumentSearchHeuristic):
 
         self.allPropositions = allPropositions
         self.allArgumentsSet = allArgumentsSet
@@ -43,13 +58,19 @@ class _BurdenOfProofManager:
 
         self.state = _BurdenState.TICKET
 
+        self.searchHeuristic = argumentSearchHeuristic
+        # self.searchHeuristic = _ArgumentSearchHeuristic.DEPTH_FIRST
+
     def step(self):
 
+        delayLength = 0.1
+
         # wait for input to continue step
-        input('------------------(continue?)------------------')
-
-        _Log('\n\nstart state: {}'.format(self.state), _LoggerState.WARNING)
-
+        # input('------------------(continue?)------------------')
+        _Log('------------------(continue?)------------------', _LoggerState.WARNING)
+        input('\n')
+        _Log('\n\nCurrent Argument set is in favour of: {}'.format(self.state), _LoggerState.WARNING)
+        time.sleep(delayLength)
         # print('all props: {}'.format(self.allArgumentsSet.propset()))
         # print('target prop: {}'.format(self.currentWeakProps))
         # because the proposition that both parties are arguing for is already
@@ -58,16 +79,27 @@ class _BurdenOfProofManager:
         if self.state == _BurdenState.TICKET:
             stateAgainst = _BurdenState.NO_TICKET
 
+        _Log('\n\nBurden of Proof is on: {}'.format(stateAgainst), _LoggerState.WARNING)
+        time.sleep(delayLength)
+
+        # document weak props
+        propsData = "Current weak propositions: "
+        for i in range(0, len(self.currentWeakProps)):
+            # if not(self.currentWeakProps[i] in self.temporaryAssumptions) and not(self.currentWeakProps[i].negate() in self.temporaryAssumptions):
+            propsData += "{}, ".format(self.currentWeakProps[i])
+
+        _Log(propsData, _LoggerState.WARNING)
+        time.sleep(1)
+
         nextArg = self.getNextArgument()
         if nextArg != None:
             self.currentArgSet.append(nextArg)
 
         # print('!!chosen arg: {}'.format(nextArg))
-
-            print("{}:  {} because {} and not {}".format(stateAgainst, nextArg.conclusion, nextArg.premises, nextArg.exceptions))
+            _Log("\tArgues that:  {} because {} and not {}".format(nextArg.conclusion, nextArg.premises, nextArg.exceptions), _LoggerState.WARNING)
         else:
-            print("{}: DAMN I have no arguments. You win.".format(stateAgainst))
-
+            _Log("\tArgues that: DAMN I have no arguments. You win.", _LoggerState.WARNING)
+        time.sleep(delayLength)
         argsetStep = cs.ArgumentSet()
         for arg in self.currentArgSet:
             argsetStep.add_argument(arg, arg_id=arg.arg_id)
@@ -89,7 +121,7 @@ class _BurdenOfProofManager:
                 # if not(caesStep.acceptable(prop)):
                 if prop != None and not(prop in self.currentWeakProps) and hasNoArgumentsFor:
 
-                    if not(prop in self.allAudience.assumptions):
+                    if not(prop in self.allAudience.assumptions): #and (len(self.allArgumentsSet.get_arguments(prop)) != 0 or len(self.allArgumentsSet.get_arguments(prop.negate())) != 0):
                         self.currentWeakProps.append(prop)
 
                     # check which argument this prop was a part of and link it to that argument's conclusion
@@ -108,6 +140,7 @@ class _BurdenOfProofManager:
                             if prop in self.allAudience.assumptions and not(prop in self.effectiveProps) and not(prop in self.trialedAssumptionProps):
                                 self.trialedAssumptionProps.append(prop)
                                 self.effectiveProps.append(prop)
+                                self.currentWeakProps.remove(prop)
 
                     # print('arg numm1111:{}, {}'.format(prop, argsetStep.get_arguments(prop)))
                     # negateAllowed = True
@@ -147,6 +180,7 @@ class _BurdenOfProofManager:
 
         caesStep = cs.CAES(argsetStep, self.temporaryAudience, self.allProofOfStandards)
 
+        changedBurdenState = False
         # check if the target prop is now acceptable
         # try:
         if caesStep.acceptable(self.argumentTargetProp) and self.state == _BurdenState.TICKET:
@@ -168,6 +202,7 @@ class _BurdenOfProofManager:
 
             _Log(finalArgStr, _LoggerState.WARNING)
             self.effectiveProps = []
+            changedBurdenState = True
             # self.searchGraph = {}
             # self.searchGraph[self.argumentTargetProp] = []
 
@@ -189,6 +224,7 @@ class _BurdenOfProofManager:
 
             _Log(finalArgStr, _LoggerState.WARNING)
             self.effectiveProps = []
+            changedBurdenState = True
             # self.searchGraph = {}
             # self.searchGraph[self.argumentTargetProp] = []
 
@@ -225,14 +261,21 @@ class _BurdenOfProofManager:
                 #     self.currentWeakProps.append(prop)
                 # _Log('weak prop found: {}'.format(prop), _LoggerState.WARNING)
 
-        # document weak props
-        propsData = ""
-        for i in range(0, len(self.currentWeakProps)):
-            propsData += "{}. weak prop: {}\n".format(i, self.currentWeakProps[i])
+        # # document weak props
+        # propsData = ""
+        # for i in range(0, len(self.currentWeakProps)):
+        #     propsData += "{}. weak prop: {}\n".format(i, self.currentWeakProps[i])
+        #
+        # _Log(propsData, _LoggerState.WARNING)
+        #
+        stateAgainst = _BurdenState.TICKET
+        if self.state == _BurdenState.TICKET:
+            stateAgainst = _BurdenState.NO_TICKET
 
-        _Log(propsData, _LoggerState.WARNING)
-
-        _Log('\n\nend state: {}'.format(self.state), _LoggerState.WARNING)
+        if changedBurdenState:
+            _Log('\n\nBurden of Proof is now on: {}'.format(stateAgainst), _LoggerState.WARNING)
+        else:
+            _Log('\n\nBurden of Proof is still on: {}'.format(stateAgainst), _LoggerState.WARNING)
 
 
         # draw out graph
@@ -278,7 +321,7 @@ class _BurdenOfProofManager:
                             weakPropArgWeightsCum.append(culmWeight)
                         else:
                             weakPropArgWeightsCum.append(0)
-                        print("attack PRORPRPOR: {} has val: {}".format(attackProp, culmWeight))
+                        # print("attack PRORPRPOR: {} has val: {}".format(attackProp, culmWeight))
                         # weakPropArgWeightsCum.append(culmWeight)
             except: pass
 
@@ -291,8 +334,17 @@ class _BurdenOfProofManager:
 
         # for now, return the last argument in the list (depth first search)
         try:
-            # return weakPropArgs[weakPropArgWeightsCum.index(min(weakPropArgWeightsCum))]
-            return weakPropArgs[-1]
+            if self.searchHeuristic == _ArgumentSearchHeuristic.DEPTH_FIRST:
+                return weakPropArgs[-1]
+            elif self.searchHeuristic == _ArgumentSearchHeuristic.BREADTH_FIRST:
+                return weakPropArgs[0]
+            elif self.searchHeuristic == _ArgumentSearchHeuristic.MIN_WEIGHT_FIRST:
+                return weakPropArgs[weakPropArgWeights.index(min(weakPropArgWeights))]
+            elif self.searchHeuristic == _ArgumentSearchHeuristic.DJIKSTRA:
+                return weakPropArgs[weakPropArgWeightsCum.index(min(weakPropArgWeightsCum))]
+            else:
+                # default is depth first search
+                return weakPropArgs[-1]
         except:
             return None
 
@@ -308,7 +360,7 @@ class _BurdenOfProofManager:
         else:
             # for now, get the first value the node points to
             firstProp = self.searchGraph[currentPropNode.prop][0]
-            print('first PROP: {}'.format(firstProp))
+            # print('first PROP: {}'.format(firstProp))
             return self.calculateCulmWeight(firstProp.prop, cumWeight + firstProp.weight)
 
     def graphHeuristic_depthFirstSearch(self, argumentList):
