@@ -1,0 +1,71 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: ailp_latex_template.aux
+The style file: plain.bst
+Database file #1: ailp_latex_biblio.bib.bib
+I was expecting a `,' or a `}'---line 24 of file ailp_latex_biblio.bib.bib
+ :   
+ :   institution =  {Utrecht University, University of Winnipeg, FOKUS}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Name 1 in "Liao, B., Jin, L., and Koons, R.C." has a comma at the end for entry ES1
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Liao, B., Jin, L., and Koons, R.C." for entry ES1
+while executing---line 1049 of file plain.bst
+Name 1 in "Gordon, T. F., Prakken, H., and Walton, D." has a comma at the end for entry ES4
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Gordon, T. F., Prakken, H., and Walton, D." for entry ES4
+while executing---line 1049 of file plain.bst
+Name 1 in "Gordon, T. F., Prakken, H., and Walton, D." has a comma at the end for entry ES4
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Gordon, T. F., Prakken, H., and Walton, D." for entry ES4
+while executing---line 1090 of file plain.bst
+Warning--empty institution in ES4
+Warning--empty year in ES4
+Name 1 in "Liao, B., Jin, L., and Koons, R.C." has a comma at the end for entry ES1
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Liao, B., Jin, L., and Koons, R.C." for entry ES1
+while executing---line 1090 of file plain.bst
+Warning--empty year in ES3
+You've used 4 entries,
+            2118 wiz_defined-function locations,
+            518 strings with 4451 characters,
+and the built_in function-call counts, 881 in all, are:
+= -- 87
+> -- 40
+< -- 0
++ -- 17
+- -- 12
+* -- 44
+:= -- 178
+add.period$ -- 12
+call.type$ -- 4
+change.case$ -- 22
+chr.to.int$ -- 0
+cite$ -- 7
+duplicate$ -- 32
+empty$ -- 61
+format.name$ -- 12
+if$ -- 168
+int.to.chr$ -- 0
+int.to.str$ -- 4
+missing$ -- 0
+newline$ -- 23
+num.names$ -- 8
+pop$ -- 19
+preamble$ -- 1
+purify$ -- 14
+quote$ -- 0
+skip$ -- 20
+stack$ -- 0
+substring$ -- 21
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 16
+warning$ -- 3
+while$ -- 8
+width$ -- 5
+write$ -- 43
+(There were 9 error messages)

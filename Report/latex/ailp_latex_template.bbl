@@ -1,19 +1,23 @@
 \begin{thebibliography}{1}
 
-\bibitem{ES2}
-K.-F. Lee.
-\newblock {\em Automatic Speech Recognition: The Development of the {SPHINX}
-  System}.
-\newblock Kluwer Academic Publishers, Boston, 1989.
-
-\bibitem{ES3}
-A.~I. Rudnicky, J.~H. Polifroni, and R.~A Brennan.
-\newblock Interactive problem solving with speech.
-\newblock {\em J. Acoust. Soc. Amer.}, 84(21--33), 1988.
+\bibitem{ES4}
+Prakken~H. Gordon, T.~F. and D.~Walton.
+\newblock The carneades model of argument and burden of proof.
+\newblock Technical report.
 
 \bibitem{ES1}
-J.~O. Smith and J.~S Abel.
-\newblock Bark and {ERB} bilinear transforms.
-\newblock {\em IEEE Trans. Speech and Audio Proc.}, 7(6):697--708, 1999.
+Jin~L. Liao, B. and R.C. Koons.
+\newblock Dynamics of argumentation systems: A division-based method.
+\newblock Technical report, Zhejiang University, University of Texas, 2011.
+
+\bibitem{ES3}
+D.~Walton.
+\newblock Argumentation: A very short introduction.
+\newblock Technical report, University of Winnipeg.
+
+\bibitem{ES2}
+Douglas Watson.
+\newblock Building a system of finding objections to an argument.
+\newblock Technical report, University of Windsor, 2001.
 
 \end{thebibliography}

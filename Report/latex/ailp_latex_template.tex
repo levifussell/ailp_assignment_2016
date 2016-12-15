@@ -74,10 +74,10 @@ emotions and whether we should ask that girl out. The concept of argumentation m
 formalise and make sensible this constantly bickering world we live in.
 
 An argument is composed of three major pieces: its premises, its conclusion,
-and an inference from the premises to conclusion (site arg paper here). Each of
+and an inference from the premises to conclusion \cite{ES2}. Each of
 these pieces is represented by propositions, an atomic statement that is either
 true or false. A system of arguments composes related arguments into an
-organised manner. Generally, we represent this as a argument tree:
+organised manner. Generally, we represent this as an argument tree:
 
 (INSERT ARGUMENT TREE)
 
@@ -86,7 +86,7 @@ another argument, and vice versa. Arguing is akin to the 80s Tron Sinclair game:
 each party rides a bike that generates a longer and longer tail - the
 challenge is to keep your bike (argument) alive by craftily averting your
 oponent's tail, yet
-simultaneously aiming to fataly catch your opponent off guard with your tail.
+simultaneously aiming to fatally catch your opponent off guard with your tail.
 
 \begin{figure}[h]
   \includegraphics[width=6cm]
@@ -120,7 +120,7 @@ premises that pose critical questions about the argument. The three types
 are exceptions, wherein if any exception is proven true, the argument cannot
 stand, assumptions, which are assumed true by the audience (as in evidence), and
 premises, which all must be true or assumed, in order for the argument to hold
-(site second paper on AILP web).
+\cite{ES4}.
 
 Carneades implements a burden of proof model. The burden of proof is on
 whichever party, based on all current arguments and assumptions thus far, has to present the
@@ -131,7 +131,7 @@ a recursive manner depending on the defensibility of the pro and con arguments
 for that proposition.
 An argument is defensible if its premises hold and its exceptions do not hold.
 To determine the truth of the argument's premises we must begin the cycle again at choosing
-arguments (site paper 2). Hence, the
+arguments \cite{ES4}. Hence, the
 argument proof descends down the argumentation tree.
 
 \section{Algorithms and implementation}
@@ -139,17 +139,19 @@ argument proof descends down the argumentation tree.
 For this purpose the following extensions were carried out
 \begin{enumerate}
 \item reading of input from text files
-\item \dots
+\item making the system capable of dynamically constructing arguments and
+	determining the burden of proof between two
+	parties
 \end{enumerate}
 
 \subsection{extending the system to read from text files}
 
 Extending the system to read from text files was not only to allow the less
 program-orientated users to implement an argumentation scheme, but also to
-simplify the system so that arguments could quickly be analysed. The Caernades
+simplify the system so that arguments could quickly be analysed. The Carneades
 python framework required the user to pre-define propositions, create an
 argument set, and create an audience before the arguments could be analysed. The
-goal of the text file reading is to remove those trivialties.
+goal of the text file reading is to remove those trivialities.
 
 The \textit{Carneades Markup Language} is a basic markup language that is used 
 to simplify the compiling of Carneades Python programs. It imitates a 
@@ -305,11 +307,12 @@ conclusion.
 We start by thinking about how the simplest argument system would function. This
 involves discussing where the 'Burden of Proof' lies within an argumentation
 system. The goal of each party in an argument is to shift the burden of proof
-away from themselves and onto their opponent, and further, make it harder for
+away from themselves and onto their opponent and, further, make it harder for
 the opponent to shift the Burden of Proof back onto the original party. To
 shift the burden of proof the party therefore has two goals: find some
 argument(s) sequence that will shift the Burden of Proof, and find the
-argument(s) sequence that is the strongest. 
+argument(s) sequence that is the strongest (this prevents the Burden of Proof
+from shifting back to the original party). 
 
 In a simple scenario, where we assume a single argument shifts the Burden of
 Proof, an argument can either prove the conclusion the parties are fighting for
@@ -331,190 +334,189 @@ any arguments for/against them. As shown below:
 
 If an argument is posed and its premises contain
 a weak proposition, that argument is not applicable. Alternately, weak
-propostions are routes of attack for a party. When the burden of proof
+propositions are routes of attack for a party. When the burden of proof
 alternates, so do the polarities of the weak propositions; the new party can
 therefore attack the weak propositions and undermine the opposing party's
 argument(s). When the party with the burden is arguing, its goal is to pose
-arguments until the argument proposition is acceptable with the current
+arguments until the proposition both parties are arguing over is acceptable
+given the current
 assumptions and already posed arguments. A good heuristic for determining which
 arguments to choose is to select arguments which prove any of the weak
 propositions.
 
 At the beginning of an argument between two parties, the only weak
 proposition is the proposition the two parties are arguing for (e.g. was it murder,
-getting a fine/ticket) and therefore the first party's most sensible move is to
+getting a fine/ticket, etc.) and therefore the first party's most sensible move is to
 pose an argument for that proposition. Because the list of possible arguments
-could be vast, a depth-first system is introduced, where the weak propositions
-are added to a stack and the current party's best choice for weak propositions
-to target are those at the top of the stack. In some scenarios, this could cause
-inefficient searching by the current party if it has chosen a deep argument tree
-that is completely wrong, but this is a tradeoff for finding sensible argument
-chains. One enhancement on this search is to use Djikstra's weighted graph to
-determine an optimal path. Once a path has been chosen that results in the
-argument proposition being acceptable (in the case of the defense) or not
+could be vast, a heuristic graph-search algorithm is introduced. The weak propositions
+are added to a list and the current party's choice for a weak proposition
+to target with an argument is the best choice best on some heuristic measure.
+Different heuristic choices and graph algorithm were experimented with in Table
+1 \ref{table1}.
+
+Once a path has been chosen that results in the
+proposition the two parties are arguing for being acceptable (in the case of the defense) or not
 acceptable (in the case of the prosecution), the full argument sequence is
-composed by traversing the assembled depth-first search graph back to the start.
+composed by traversing the assembled graph via the chosen arguments back to the start.
 The Burden of Proof then changes hands. We can see this process in the argument
-simulation to the right:
+simulation in the figure \ref{simOfHeuristics}:
 
 \begin{figure}[h!]
-	\includegraphics[width=8cm]{images/ArgumentSearchSim2-2.png}
+	\label{simOfHeuristics}
+	\includegraphics[width=6cm]{images/ArgumentSearchSim2-2.png}
 	\centering
 	\caption{simulation of depth-first searching the argument graph}
 \end{figure}
 
+A brief statement on how the burden of proof system is displayed when running
+the program. When the test case is selected and run, the argument system will go
+through a sequence of steps. Each step either describes how the party with the
+burden of proof is searching for an effective argument sequence (and describes
+the most recent argument that has been searched):
+
+\begin{figure}[h!]
+	\label{screen1}
+	\includegraphics[width=6cm]{images/screeen1.png}
+	\centering
+	\caption{Current party is searching for an argument.}
+\end{figure}
+
+Or describes how the current party has succeeded in finding an effective
+argument sequence (additionally it will display the sequence of propositions in the graph
+that derive the argument chain).
+
+\begin{figure}[h!]
+	\label{screen2}
+	\includegraphics[width=6cm]{images/screeen2.png}
+	\centering
+	\caption{Current party is searching for an argument.}
+\end{figure}
+
+If all arguments have been exhausted and the current party is unable to change
+the burden of proof, then the current party has lost the argument. The opposing
+party is deemed the 'winner'. Note that 'Prosecution' and 'Defense' are renamed
+to names more relevant to each test case so that the system can be understood.
+The end of each step outlines the current situation of the argument graph using
+an inverted-index format.
+
+A good demonstration of the burden of proof changing hands multiple times is in
+test case '2' (when running 'main.py')
+
 \section{Experiments and results}
 
-\subsection{Testing of the text reading extension}
+\subsection{experimenting with the argumentation heuristics}
+How different hueristic algorithms applied to the argumentation search affected
+the speed of determining the next argument sequence, and also whether the
+argument sequence determined was the most optimal.
 
-There were three test cases implement the extent of the systems ability to
-understand a variety of argumentation inputs: 
-
-\begin{enumerate}
-	\item \textit{TestCase1}:
-	\item \textit{TestCase2:}
-	\item \textit{TestCase3:}
-\end{enumerate}
-
-
-\subsection{Testing the argumentation extension}
-
-\begin{table} [t,h]
-	\caption{\label{table2} Experimenting with different graph searching
+\begin{table} [t,h!]
+	\caption{\label{table1} Experimenting with different graph searching
 	algorithms.}
-	\vspace{2mm}
+	\vspace{1mm}
 	\centerline{
-		\begin{tabular}{|c|c|c|}
+		\begin{tabular}{|c|c|c|c|}
 			\hline
-			algorithm & itteration & num nodes searched \\
+			algorithm & branch order & itteration & best solution? \\
 			\hline  \hline
-			depth-first search & 0 & 0 \\
-			depth-first search & 0 & 0 \\
-			depth-first search & 0 & 0 \\
-			weight-first search & 0 & 0 \\
-			weight-first search & 0 & 0 \\
-			weight-first search & 0 & 0 \\
-			djikstra search & 0 & 0 \\
-			djikstra search & 0 & 0 \\
-			djikstra search & 0 & 0 \\
+			depth-first search & B1,B2,B3,B4 & 6 & no\\
+			depth-first search & B4,B3,B2,B1 & 3 & yes\\
+			depth-first search & B1,B4,B3,B2 & 2 & yes\\
+			depth-first search & B2,B4,B1,B3 & 4 & no\\
+			depth-first search & B2,B3,B1,B4 & 7 & no\\
+			\hline
+			breadth-first search & B2,B3,B1,B4 & 5 & yes\\
+			breadth-first search & B4,B3,B2,B1 & 7 & yes\\
+			breadth-first search & B1,B4,B3,B2 & 7 & yes\\
+			breadth-first search & B2,B4,B1,B3 & 5 & yes\\
+			breadth-first search & B2,B3,B1,B4 & 5 & yes\\
+			\hline
+			min-weight-first search & B2,B3,B1,B4 & 5 & no\\
+			min-weight-first search & B4,B3,B2,B1 & 5 & no\\
+			min-weight-first search & B1,B4,B3,B2 & 5 & no\\
+			min-weight-first search & B2,B4,B1,B3 & 5 & no\\
+			min-weight-first search & B2,B3,B1,B4 & 5 & no\\
+			\hline
+			djikstra search & B2,B3,B1,B4 & 6 & yes\\
+			djikstra search & B4,B3,B2,B1 & 6 & yes\\
+			djikstra search & B1,B4,B3,B2 & 6 & yes\\
+			djikstra search & B2,B4,B1,B3 & 6 & yes\\
+			djikstra search & B2,B3,B1,B4 & 6 & yes\\
 			\hline
 		\end{tabular}
 	}
 \end{table}
 
-\section{Discussion and Conclusion}
-
-\subsection{Formatting: tables}
-
-An example of a table is shown as Table~\ref{table1}. Somewhat 
-different styles are allowed according to the type and purpose of the 
-table. 
-
-\begin{table} [t,h]
-\caption{\label{table1} \textit{This is an example of a table.}}
-\vspace{2mm}
-\centerline{
-\begin{tabular}{|c|c|}
-\hline
-ratio & decibels \\
-\hline  \hline
-1/1 & 0 \\
-2/1 & $\approx 6$ \\
-3.16 & 10 \\
-10/1 & 20 \\ 
-1/10 & -20 \\
-100/1 & 40 \\
-1000/1 & 60 \\
-\hline
-\end{tabular}}
+\begin{table} [t,h!]
+	\caption{\label{table2} Averaged results of different graph searching
+	algorithms.}
+	\vspace{2mm}
+	\centerline{
+		\begin{tabular}{|c|c|c|}
+			\hline
+			algorithm & avg itterations & accuracy\\
+			\hline  \hline
+			depth-first search & 4.4 & 2/5\\
+			\hline
+			breadth-first search & 5.8 & 5/5\\
+			\hline
+			min-weight-first search & 5 & 0/5\\
+			\hline
+			djikstra search & 6 & 5/5\\
+			\hline
+		\end{tabular}
+	}
 \end{table}
 
-To include text without formatting, use this
-(scriptsize uses a significantly smaller font,
-intermediate sizes are footnotesize and small):
-{\scriptsize
-\begin{verbatim}
-8.8   1.2   0.0   2.5   3.8   7.5   0.0   5.0   0.0
-7.5   1.2   0.0   2.5   2.5   0.0   5.0   0.0   1.2
-0.0  67.5   5.0   1.2  11.2   3.8   7.5   3.8   0.0
-0.0   1.2  62.5   3.8  22.5   0.0   6.2   2.5   1.2
-2.5   0.0   0.0  76.2   0.0   1.2   6.2   0.0  13.8
-1.2   6.2  21.2   5.0  47.5   1.2   5.0   1.2   6.2
-6.2   3.8   0.0   5.0   0.0  57.5   0.0  10.0   0.0
-0.0   2.5   1.2   8.8   0.0   0.0  73.8   2.5  11.2
-0.0   2.5   8.8   2.5   3.8   5.0   2.5  61.3   2.5
-0.0   0.0   2.5  20.0   0.0   0.0  12.5   0.0  63.7
-\end{verbatim}
-}
+\clearpage{}
 
-If you want to use both columns, put it in a figure*:
-(figure* uses both columns, figure just 1):
-it is likely to float away to an unexpected place, though.
-\begin{figure*}[htb]
-  \centering
-% put minipage to allow verbatim to be moved around --
-% unnecessary if not using verbatim.
+\section{Discussion and Conclusion}
 
-  \begin{minipage}[h]{0.7\linewidth}
-\begin{verbatim}
-8.8   1.2   0.0   2.5   3.8   7.5   0.0   5.0   0.0
-7.5   1.2   0.0   2.5   2.5   0.0   5.0   0.0   1.2
-0.0  67.5   5.0   1.2  11.2   3.8   7.5   3.8   0.0
-0.0   1.2  62.5   3.8  22.5   0.0   6.2   2.5   1.2
-2.5   0.0   0.0  76.2   0.0   1.2   6.2   0.0  13.8
-1.2   6.2  21.2   5.0  47.5   1.2   5.0   1.2   6.2
-6.2   3.8   0.0   5.0   0.0  57.5   0.0  10.0   0.0
-0.0   2.5   1.2   8.8   0.0   0.0  73.8   2.5  11.2
-0.0   2.5   8.8   2.5   3.8   5.0   2.5  61.3   2.5
-0.0   0.0   2.5  20.0   0.0   0.0  12.5   0.0  63.7
-\end{verbatim}
-  \end{minipage}
+\subsection{analysis of experiments}
+Experimenting with different heuristic graph searches posed some interesting
+results. This data was collected via the following simulated test case:
 
-  \caption{Some data}
-  
-\end{figure*}
+\begin{figure}[h!]
+	\label{ArgumentHeuristics}
+	\includegraphics[width=8cm]{images/ArgumentHeuristics.png}
+	\centering
+	\caption{Testing case used to measure heuristics algorithms. Weight of each
+	argument given by 'w'. 'B\#' is the name of each branch. These are shuffled
+	in different orders at testing time. Only branch 'B2' and 'B3' produce an
+argument sequence that makes 'T0' applicable.}
+\end{figure}
+This can be run by selecting option '4' at the start of the 'main.py'
+program and then selecting which heuristic you would like to run for selecting
+arguments. The weights between two arguments are determined by how weak that
+argument is. A higher weight corresponds to a higher weakness. Weakness of an
+argument is the sum of its premises and exceptions. This is a sensible choice
+because arguments that are more 'complex', i.e. have more propositions to
+prove/disprove it, are more likely to be defeated by the opposition. The current
+holder of the Burden of Proof therefore favours simpler arguments that are
+easier to prove and harder to be defeated.
 
-\subsection{Maths, if needed}
-
-%
-%\vspace{-3mm}
-\begin{equation}
-x(t) = s(f_\omega(t))
-\label{eq1}
-\end{equation}
-where \(f_\omega(t)\) is a special warping function
-\begin{equation}
-f_\omega(t)=\frac{1}{2\pi j}\oint_C \frac{\nu^{-1k}d\nu}
-{(1-\beta\nu^{-1})(\nu^{-1}-\beta)}
-\label{eq2}
-\end{equation}
-A residue theorem states that
-\begin{equation}
-\oint_C F(z)dz=2 \pi j \sum_k Res[F(z),p_k]
-\label{eq3}
-\end{equation}
-Applying (\ref{eq3}) to (\ref{eq1}), 
-it is straightforward to see that
-\begin{equation}
-1 + 1 = \pi
-\label{eq4}
-\end{equation}
-
-And here is an included image (png and pdf formats are allowed).
-
-\begin{center}
-  \includegraphics[width=6cm]
-  {carneades.png}
-\end{center}
-\subsection{References}
-
-References should be indexed in some way.
-
-Here they are given  using bibtex to format the entries, which 
-in this case are
-\cite{ES1}, \cite{ES2}, and \cite{ES3}. 
-You \emph{can} use \texttt{bibtex} to prepare references, as here,
-or do it by hand if there are very few.
+From the final data, the best performing heuristics were
+breadth-first search and djikstra (as anticipated, considering djikstra is one of
+the most commonly used heuristics). Both algorithms found the
+best solution each time. Although the breadth-first search had the lowest
+average number of iterations, the test graph was an exclusive case where
+the best solution was always at a higher depth than other solutions, therefore
+breadth-first search would always select the best solution.
+Djikstra is therefore left as the best option for traversing the
+argument graph due to its consistency and ability to always find the strongest
+argument.
+\subsection{how this system could be extended further}
+One topic that would have been beneficial to explore further would be how weights
+are assigned to different arguments for the graph search. The current method of
+using the total number of premises and exceptions was an arbitrary choice based
+on a general concept of how arguments can be deemed strong or weak. Weights
+based on the depth of the argument in the tree, weights based on the probability of a chosen
+proposition leading to an assumption, and also larger trees to search would have
+allowed for an interesting analysis of the argumentation system and the extends
+to which it can perform in more realistic scenarios. Overall, it is quite
+impressive how a relatively simple system can perform such a convincing display
+of argumentation. Given the hardest piece to the argumentation system is the
+construction of an affective argumentation graph, there is definite room for
+further complexity and interesting evolutions of how to traverse this graph.
 
 %
 \bibliographystyle{plain}
