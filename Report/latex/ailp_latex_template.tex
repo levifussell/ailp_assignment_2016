@@ -52,7 +52,7 @@
 The following report describes work done in the AILP
 course over the course of three months. It gives the aims and hypothesis that guided the work;
 describes the algorithms that were implemented; reports the results
-of experiments that were run; and analysis these results.
+of experiments that were run; and analyses these results.
 
 \section{Aim}
 
@@ -73,10 +73,7 @@ An argument is composed of three major pieces: its premises, its conclusion,
 and an inference from the premises to conclusion \cite{ES2}. Each of
 these pieces is represented by propositions, an atomic statement that is either
 true or false. A system of arguments composes related arguments into an
-organised manner. Generally, we represent this as an argument tree:
-
-(INSERT ARGUMENT TREE)
-
+organised manner. Generally, we represent this as an argument tree.
 Arguments form chains where the conclusion of one argument is the premise for
 another argument, and vice versa. Arguing is akin to the 80s Tron Sinclair game:
 each party rides a bike that generates a longer and longer tail - the
@@ -297,21 +294,21 @@ Some syntactical notes:
 The system now has the capability to take a set of arguments along with an audience and
 determine whether a proposition is applicable using the generated argument tree.
 A useful feature to this system would be the ability to observe how the various
-arguments are used by both the persecution and the defense to form the final
+arguments are used by both the prosecution and the defense to form the final
 conclusion.
 
 We start by thinking about how the simplest argument system would function. This
-involves discussing where the 'Burden of Proof' lies within an argumentation
+involves discussing where the burden of proof (as defined earlier) lies within an argumentation
 system. The goal of each party in an argument is to shift the burden of proof
 away from themselves and onto their opponent and, further, make it harder for
-the opponent to shift the Burden of Proof back onto the original party. To
+the opponent to shift the burden of proof back onto the original party. To
 shift the burden of proof the party therefore has two goals: find some
-argument(s) sequence that will shift the Burden of Proof, and find the
-argument(s) sequence that is the strongest (this prevents the Burden of Proof
+argument(s) sequence that will shift the burden of proof, and find the
+argument(s) sequence that is the strongest (this prevents the burden of proof
 from shifting back to the original party). 
 
-In a simple scenario, where we assume a single argument shifts the Burden of
-Proof, an argument can either prove the conclusion the parties are fighting for
+In a simple scenario, where we assume a single argument shifts the burden of
+proof, an argument can either prove the conclusion the parties are fighting for
 in favour of the burdened party, undermine an argument that the opposing party
 has made, or build from a previous weak argument that the current party has
 made. As an argument system progresses and each argument is posed by a party, we
@@ -347,7 +344,7 @@ pose an argument for that proposition. Because the list of possible arguments
 could be vast, a heuristic graph-search algorithm is introduced. The weak propositions
 are added to a list and the current party's choice for a weak proposition
 to target with an argument is the best choice best on some heuristic measure.
-Different heuristic choices and graph algorithm were experimented with in Table
+Different heuristic choices and graph algorithms were experimented with in Table
 1 \ref{table1}.
 
 Once a path has been chosen that results in the
@@ -385,7 +382,7 @@ that derive the argument chain).
 	\label{screen2}
 	\includegraphics[width=6cm]{images/screeen2.png}
 	\centering
-	\caption{Current party is searching for an argument.}
+	\caption{Current party has found an argument.}
 \end{figure}
 
 If all arguments have been exhausted and the current party is unable to change
@@ -475,7 +472,7 @@ results. This data was collected via the following simulated test case:
 	\label{ArgumentHeuristics}
 	\includegraphics[width=8cm]{images/ArgumentHeuristics.png}
 	\centering
-	\caption{Testing case used to measure heuristics algorithms. Weight of each
+	\caption{Test case used to measure heuristics algorithms. Weight of each
 	argument given by 'w'. 'B\#' is the name of each branch. These are shuffled
 	in different orders at testing time. Only branch 'B2' and 'B3' produce an
 argument sequence that makes 'T0' applicable.}
@@ -487,27 +484,28 @@ argument is. A higher weight corresponds to a higher weakness. Weakness of an
 argument is the sum of its premises and exceptions. This is a sensible choice
 because arguments that are more 'complex', i.e. have more propositions to
 prove/disprove it, are more likely to be defeated by the opposition. The current
-holder of the Burden of Proof therefore favours simpler arguments that are
+holder of the burden of proof therefore favours simpler arguments that are
 easier to prove and harder to be defeated.
 
 From the final data, the best performing heuristics were
-breadth-first search and djikstra (as anticipated, considering djikstra is one of
+breadth-first search and djikstra (as hypothesised, considering djikstra is one of
 the most commonly used heuristics). Both algorithms found the
 best solution each time. Although the breadth-first search had the lowest
 average number of iterations, the test graph was an exclusive case where
 the best solution was always at a higher depth than other solutions, therefore
-breadth-first search would always select the best solution.
+breadth-first search would always select the best solution. Breadth-first search
+also had a much higher variance when it came to number of iterations.
 Djikstra is therefore left as the best option for traversing the
 argument graph due to its consistency and ability to always find the strongest
 argument.
 \subsection{how this system could be extended further}
-One topic that would have been beneficial to explore further would be how weights
+One topic that would have been beneficial to explore further would be how the weights
 are assigned to different arguments for the graph search. The current method of
 using the total number of premises and exceptions was an arbitrary choice based
 on a general concept of how arguments can be deemed strong or weak. Weights
 based on the depth of the argument in the tree, weights based on the probability of a chosen
 proposition leading to an assumption, and also larger trees to search would have
-allowed for an interesting analysis of the argumentation system and the extends
+allowed for an interesting analysis of the argumentation system and the extents
 to which it can perform in more realistic scenarios. Overall, it is quite
 impressive how a relatively simple system can perform such a convincing display
 of argumentation. Given the hardest piece to the argumentation system is the
