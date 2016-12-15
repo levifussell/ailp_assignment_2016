@@ -10,14 +10,6 @@ class _BurdenState(Enum):
     NO_TICKET = 2
     BROKE = 3
 
-    def __str__(self):
-        if self.value == 1:
-            return "TICKET"
-        elif self.value == 2:
-            return "NO TICKET"
-        else:
-            return "BROKE"
-
 class _ArgumentSearchHeuristic(Enum):
     DEPTH_FIRST = 1
     BREADTH_FIRST = 2
@@ -35,7 +27,7 @@ class WeightedPropEdge:
 
 class _BurdenOfProofManager:
 
-    def __init__(self, allPropositions, allArgumentsSet, allAudience, allProofOfStandards, argumentProp, argumentSearchHeuristic):
+    def __init__(self, allPropositions, allArgumentsSet, allAudience, allProofOfStandards, argumentProp, argumentSearchHeuristic, prosName='PROSECUTION', defName='DEFENSE'):
 
         self.allPropositions = allPropositions
         self.allArgumentsSet = allArgumentsSet
@@ -59,17 +51,29 @@ class _BurdenOfProofManager:
         self.state = _BurdenState.TICKET
 
         self.searchHeuristic = argumentSearchHeuristic
+
+        self.prosName = prosName
+        self.defName = defName
         # self.searchHeuristic = _ArgumentSearchHeuristic.DEPTH_FIRST
+
+    def nameFromState(self, state):
+
+        if state == _BurdenState.TICKET:
+            return self.prosName
+        elif state == _BurdenState.NO_TICKET:
+            return self.defName
+        else:
+            return 'BROKE'
 
     def step(self):
 
-        delayLength = 0.1
+        delayLength = 0.2
 
         # wait for input to continue step
         # input('------------------(continue?)------------------')
         _Log('------------------(continue?)------------------', _LoggerState.WARNING)
         input('\n')
-        _Log('\n\nCurrent Argument set is in favour of: {}'.format(self.state), _LoggerState.WARNING)
+        _Log('\n\nCurrent Argument set is in favour of: {}'.format(self.nameFromState(self.state)), _LoggerState.WARNING)
         time.sleep(delayLength)
         # print('all props: {}'.format(self.allArgumentsSet.propset()))
         # print('target prop: {}'.format(self.currentWeakProps))
@@ -79,7 +83,7 @@ class _BurdenOfProofManager:
         if self.state == _BurdenState.TICKET:
             stateAgainst = _BurdenState.NO_TICKET
 
-        _Log('\n\nBurden of Proof is on: {}'.format(stateAgainst), _LoggerState.WARNING)
+        _Log('\n\nBurden of Proof is on: {}'.format(self.nameFromState(stateAgainst)), _LoggerState.WARNING)
         time.sleep(delayLength)
 
         # document weak props
@@ -89,7 +93,10 @@ class _BurdenOfProofManager:
             propsData += "{}, ".format(self.currentWeakProps[i])
 
         _Log(propsData, _LoggerState.WARNING)
-        time.sleep(1)
+        time.sleep(delayLength)
+
+        _Log("\n...searching for an argument...", _LoggerState.WARNING)
+        time.sleep(delayLength)
 
         nextArg = self.getNextArgument()
         if nextArg != None:
@@ -99,6 +106,7 @@ class _BurdenOfProofManager:
             _Log("\tArgues that:  {} because {} and not {}".format(nextArg.conclusion, nextArg.premises, nextArg.exceptions), _LoggerState.WARNING)
         else:
             _Log("\tArgues that: DAMN I have no arguments. You win.", _LoggerState.WARNING)
+            return self.state
         time.sleep(delayLength)
         argsetStep = cs.ArgumentSet()
         for arg in self.currentArgSet:
@@ -175,8 +183,8 @@ class _BurdenOfProofManager:
         assumpStep.extend(self.allAudience.assumptions)
         assumpStep.extend(self.temporaryAssumptions)
         self.temporaryAudience = cs.Audience(assumpStep, self.allAudience.weight)
-
-        print('\nCURRENT ASSUMPTIONS:{}\n'.format(self.temporaryAudience.assumptions))
+        finalArgStr = ''
+        # print('\nCURRENT ASSUMPTIONS:{}\n'.format(self.temporaryAudience.assumptions))
 
         caesStep = cs.CAES(argsetStep, self.temporaryAudience, self.allProofOfStandards)
 
@@ -194,13 +202,13 @@ class _BurdenOfProofManager:
 
             # trace the argument found back to the target argument prop and write it out
             finalArg = self.traceShortestArgument()
-            finalArgStr = "FINAL ARG: "
+            finalArgStr = "Final Argument Derviation is: "
             for arg in finalArg:
                 finalArgStr += "\nPath: "
                 for prop in arg:
                     finalArgStr += "->{}".format(prop)
 
-            _Log(finalArgStr, _LoggerState.WARNING)
+            # _Log(finalArgStr, _LoggerState.WARNING)
             self.effectiveProps = []
             changedBurdenState = True
             # self.searchGraph = {}
@@ -216,13 +224,13 @@ class _BurdenOfProofManager:
 
             # trace the argument found back to the target argument prop and write it out
             finalArg = self.traceShortestArgument()
-            finalArgStr = "FINAL ARG: "
+            finalArgStr = "Final Argument Derviation is: "
             for arg in finalArg:
                 finalArgStr += "\nPath: "
                 for prop in arg:
                     finalArgStr += "->{}".format(prop)
 
-            _Log(finalArgStr, _LoggerState.WARNING)
+            # _Log(finalArgStr, _LoggerState.WARNING)
             self.effectiveProps = []
             changedBurdenState = True
             # self.searchGraph = {}
@@ -273,19 +281,31 @@ class _BurdenOfProofManager:
             stateAgainst = _BurdenState.NO_TICKET
 
         if changedBurdenState:
-            _Log('\n\nBurden of Proof is now on: {}'.format(stateAgainst), _LoggerState.WARNING)
+            _Log("\nArgument complete! Burden of proof changed!", _LoggerState.WARNING)
+            # finalArg = self.traceShortestArgument()
+            # finalArgStr = "Final Argument Proof is: "
+            # for arg in finalArg:
+            #     finalArgStr += "\nPath: "
+            #     for prop in arg:
+            #         finalArgStr += "->{}".format(prop)
+            _Log(finalArgStr, _LoggerState.WARNING)
+            _Log('\n\nBurden of Proof is now on: {}'.format(self.nameFromState(stateAgainst)), _LoggerState.WARNING)
         else:
-            _Log('\n\nBurden of Proof is still on: {}'.format(stateAgainst), _LoggerState.WARNING)
+            _Log("\n...argument incomplete. Must continue searching...", _LoggerState.WARNING)
+            time.sleep(delayLength)
+            _Log('\n\nBurden of Proof is still on: {}'.format(self.nameFromState(stateAgainst)), _LoggerState.WARNING)
 
 
         # draw out graph
-        searchGraphStr = ""
+        searchGraphStr = "Searched argument graph:\n"
         for node in self.searchGraph.keys():
             searchGraphStr += "\n{} -> ".format(node)
             for link in self.searchGraph[node]:
                 searchGraphStr += "{}, ".format(link)
 
         _Log(searchGraphStr, _LoggerState.WARNING)
+
+        return 0
 
     def getNextArgument(self):
 

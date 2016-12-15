@@ -26,14 +26,14 @@
 from Markup._MarkupManager import _MarkupManager
 from Markup.CodeFile import CodeFile
 from BurdenOfProof._BurdenOfProofManager import _BurdenOfProofManager, _ArgumentSearchHeuristic
-from _LoggerManager import _Logger_Thread, _LoggerState
+from _LoggerManager import _Logger_Thread, _LoggerState, _Log
 
 import time
 
 # SIMULATE A FILE READ HERE----
 # REGEX FOR GENERIC MARK UP LANGUAGE--------------------------------------
 
-def beginMarkupRead(codeFile, testProp, expectedTestResult, searchHeuristic = _ArgumentSearchHeuristic.BREADTH_FIRST):
+def beginMarkupRead(codeFile, testProp, expectedTestResult, searchHeuristic = _ArgumentSearchHeuristic.DJIKSTRA, prosName='PROSECUTION', defName='DEFENSE'):
 
     # start error thread
     _THREAD_log = _Logger_Thread()
@@ -45,11 +45,14 @@ def beginMarkupRead(codeFile, testProp, expectedTestResult, searchHeuristic = _A
     # read, compile and process the markup file to Carneades system
     allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp = _MarkupManager.run(codeFile, testProp, expectedTestResult)
 
-    burdenProofSim = _BurdenOfProofManager(allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp, searchHeuristic)
+    burdenProofSim = _BurdenOfProofManager(allPropositions, allArgumentSet, allAudience, allProofOfStandard, targetArgProp, searchHeuristic, prosName, defName)
 
     # do 5 steps for now
-    for i in range(0, 20):
-        burdenProofSim.step()
+    state = 0
+    while state == 0:
+        state = burdenProofSim.step()
+
+    _Log("\n\nARGUMENT OVER. WINNER: {}\n\n".format(burdenProofSim.nameFromState(state)), _LoggerState.WARNING)
 
     # end the process and give the threads time to close
     _Logger_Thread.programOverTime = time.time()
@@ -64,11 +67,11 @@ if __name__ == '__main__':
 
     # begin process
     if testNum == '1':
-        beginMarkupRead('CodeTests/codeTest1.txt', 'ticket_revoked', True)
+        beginMarkupRead('CodeTests/codeTest1.txt', 'ticket_revoked', True, prosName='TICKET', defName='NO TICKET')
     elif testNum == '2':
-        beginMarkupRead('CodeTests/codeTest2.txt', 'give_citizenship', False)
+        beginMarkupRead('CodeTests/codeTest2.txt', 'give_citizenship', False, prosName='NO CITIZENSHIP', defName='CITIZENSHIP')
     elif testNum == '3':
-        beginMarkupRead('CodeTests/codeTest3.txt', 'shoplifting', True)
+        beginMarkupRead('CodeTests/codeTest3.txt', 'shoplifting', True, prosName='NO SHOPLIFTING', defName='SHOPLIFTING')
     elif testNum == '4':
         heuristic = input('choose argument search heuristic:\n d = depth-first\n b = breadth-first\n m = min-weight-first\n k = djikstra\n')
         argSearchHeuristic = _ArgumentSearchHeuristic.DEPTH_FIRST
